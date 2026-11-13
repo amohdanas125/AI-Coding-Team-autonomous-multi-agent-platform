@@ -127,25 +127,6 @@ def call_agent(system_prompt: str, user_prompt: str, schema: dict, schema_name: 
             is_malformed_json = (
                 status_code == 400 and "json_validate_failed" in str(e).lower()
             )
-            if is_malformed_json:
-                err_dict = getattr(e, "body", None)
-                if isinstance(err_dict, dict) and "error" in err_dict:
-                    failed_gen = err_dict["error"].get("failed_generation")
-                    if failed_gen:
-                        candidates = [
-                            failed_gen,
-                            re.sub(r"\\+'", "'", failed_gen),
-                            re.sub(r"\\'", "'", failed_gen),
-                            re.sub(r'\\(?![/"\\bfnrtu])', r'\\\\', re.sub(r"\\+'", "'", failed_gen)),
-                        ]
-                        for cand in candidates:
-                            try:
-                                payload = json.loads(cand)
-                                validate_payload(payload, schema)
-                                print(f"  [Rescued valid JSON from Groq's failed_generation on '{schema_name}']")
-                                return payload
-                            except Exception:
-                                pass
 
             if (is_rate_limit or is_malformed_json) and attempt < max_retries - 1:
                 wait_seconds = 20 * (attempt + 1) if is_rate_limit else 3

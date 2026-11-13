@@ -79,6 +79,52 @@ setup_notes: a short string - anything a developer should know before running th
 Keep it minimal and correct. If something is ambiguous, make the simplest reasonable choice and note it in setup_notes. The output must be strictly conforming JSON without invalid escape sequences."""
 
 
+def _build_vite_config_js() -> str:
+    return """import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 5173
+  }
+});
+"""
+
+
+def _build_index_html(app_name: str) -> str:
+    return f"""<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{app_name}</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+"""
+
+
+def _build_main_jsx() -> str:
+    return """import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import App from './App';
+import './index.css';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
+);
+"""
+
+
 def _build_index_css() -> str:
     """Deterministic modern design system stylesheet - NOT an LLM call.
     Rule #1 of project architecture: Anything a program can compute, compute
@@ -896,10 +942,19 @@ def generate_frontend(spec: dict, api_contract: list) -> dict:
         all_files.extend(result["files"])
 
     skeleton = generate_frontend_skeleton(spec["app_name"], spec["auth_required"], spec["pages"])
-    # If the skeleton output generated src/index.css, enrich it with our full modern design system
     for f in skeleton["files"]:
+        # Unescape any literal escaped newlines or quotes if LLM double-escaped
+        if isinstance(f.get("content"), str) and "\n" not in f["content"] and r"\n" in f["content"]:
+            f["content"] = f["content"].replace(r"\n", "\n").replace(r'\"', '"')
+
         if f["path"] == "src/index.css":
             f["content"] = _build_index_css()
+        elif f["path"] == "vite.config.js":
+            f["content"] = _build_vite_config_js()
+        elif f["path"] == "index.html":
+            f["content"] = _build_index_html(spec.get("app_name", "App"))
+        elif f["path"] == "src/main.jsx":
+            f["content"] = _build_main_jsx()
         elif f["path"] == "package.json":
             # Sanitize package.json content to eliminate any literal escaped quotes (\") produced by LLMs
             try:

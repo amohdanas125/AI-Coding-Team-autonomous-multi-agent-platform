@@ -25,6 +25,13 @@ def _clean_name(app_name: str) -> str:
     return cleaned or "generated-app"
 
 
+def _clean_content(content: str) -> str:
+    """Unescape literal escaped newlines/quotes if a model double-escaped them."""
+    if isinstance(content, str) and "\n" not in content and r"\n" in content:
+        return content.replace(r"\n", "\n").replace(r'\"', '"')
+    return content
+
+
 def assemble_project(
     task_id: str,
     spec: dict,
@@ -51,7 +58,7 @@ def assemble_project(
         file_path = os.path.join(backend_dir, file_obj["path"])
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, "w", encoding="utf-8") as fh:
-            fh.write(file_obj["content"])
+            fh.write(_clean_content(file_obj["content"]))
 
     # 2. Add Test Infrastructure & devDependencies to Backend package.json
     package_json_path = os.path.join(backend_dir, "package.json")
@@ -114,7 +121,7 @@ def assemble_project(
         file_path = os.path.join(frontend_dir, file_obj["path"])
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, "w", encoding="utf-8") as fh:
-            fh.write(file_obj["content"])
+            fh.write(_clean_content(file_obj["content"]))
 
     # Ensure frontend package.json is always valid unescaped JSON (protects against LLM escaped quotes: \")
     fe_pkg_path = os.path.join(frontend_dir, "package.json")
