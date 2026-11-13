@@ -116,6 +116,39 @@ def assemble_project(
         with open(file_path, "w", encoding="utf-8") as fh:
             fh.write(file_obj["content"])
 
+    # Ensure frontend package.json is always valid unescaped JSON (protects against LLM escaped quotes: \")
+    fe_pkg_path = os.path.join(frontend_dir, "package.json")
+    if os.path.exists(fe_pkg_path):
+        try:
+            with open(fe_pkg_path, "r", encoding="utf-8") as fh:
+                raw_fe_pkg = fh.read()
+            cleaned_pkg = raw_fe_pkg.replace('\\"', '"')
+            fe_pkg = json.loads(cleaned_pkg)
+        except Exception:
+            fe_pkg = {
+                "name": f"{clean_name}-frontend",
+                "version": "0.1.0",
+                "private": True,
+                "type": "module",
+                "scripts": {"dev": "vite", "build": "vite build", "preview": "vite preview"},
+                "dependencies": {
+                    "react": "^18.2.0",
+                    "react-dom": "^18.2.0",
+                    "react-router-dom": "^6.14.1",
+                },
+                "devDependencies": {
+                    "vite": "^5.0.0",
+                    "@vitejs/plugin-react": "^4.2.0",
+                },
+            }
+        fe_pkg.setdefault("type", "module")
+        fe_pkg.setdefault("scripts", {})
+        fe_pkg["scripts"].setdefault("dev", "vite")
+        fe_pkg["scripts"].setdefault("build", "vite build")
+        fe_pkg["scripts"].setdefault("preview", "vite preview")
+        with open(fe_pkg_path, "w", encoding="utf-8") as fh:
+            json.dump(fe_pkg, fh, indent=2)
+
     # Write frontend .env.example
     frontend_env_example = os.path.join(frontend_dir, ".env.example")
     with open(frontend_env_example, "w", encoding="utf-8") as fh:

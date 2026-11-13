@@ -900,7 +900,15 @@ def generate_frontend(spec: dict, api_contract: list) -> dict:
     for f in skeleton["files"]:
         if f["path"] == "src/index.css":
             f["content"] = _build_index_css()
-            break
+        elif f["path"] == "package.json":
+            # Sanitize package.json content to eliminate any literal escaped quotes (\") produced by LLMs
+            try:
+                clean_content = f["content"].replace('\\"', '"')
+                parsed_json = json.loads(clean_content)
+                parsed_json.setdefault("type", "module")
+                f["content"] = json.dumps(parsed_json, indent=2)
+            except Exception:
+                pass
     all_files.extend(skeleton["files"])
 
     return {
