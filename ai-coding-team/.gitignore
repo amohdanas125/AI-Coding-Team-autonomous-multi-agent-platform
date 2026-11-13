@@ -1,0 +1,10 @@
+.env
+output/
+__pycache__/
+*.pyc
+.pytest_cache/
+node_modules/
+generated_apps/*/
+!generated_apps/.gitkeep
+venv/
+.venv/

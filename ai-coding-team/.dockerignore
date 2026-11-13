@@ -1,0 +1,12 @@
+.env
+.git
+.github
+__pycache__
+*.pyc
+.pytest_cache
+node_modules
+generated_apps
+output/*.zip
+output/*
+.venv
+venv
