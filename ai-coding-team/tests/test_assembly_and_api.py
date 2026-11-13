@@ -165,3 +165,46 @@ def test_api_post_build_synchronous(monkeypatch):
     dl_res = client.get(data["assembly"]["download_url"])
     assert dl_res.status_code == 200
     assert dl_res.headers["content-type"] == "application/zip"
+
+
+def test_api_async_build_and_status(monkeypatch):
+    fake_state = {
+        "task_id": "async-test-task",
+        "user_prompt": "Build a task app",
+        "spec": SAMPLE_SPEC,
+        "backend_output": SAMPLE_BACKEND,
+        "frontend_output": SAMPLE_FRONTEND,
+        "qa_report": SAMPLE_QA,
+        "docs_output": SAMPLE_DOCS,
+        "qa_attempt": 1,
+        "needs_human_review": False,
+        "agent_log": [],
+    }
+
+    # Yield mock updates as if streaming through agents
+    def fake_stream(state, stream_mode="updates"):
+        yield {"project_manager": {"spec": SAMPLE_SPEC}}
+        yield {"backend_developer": {"backend_output": SAMPLE_BACKEND}}
+        yield {"frontend_developer": {"frontend_output": SAMPLE_FRONTEND}}
+        yield {"qa_engineer": {"qa_report": SAMPLE_QA, "qa_attempt": 1}}
+        yield {"documentation_writer": {"docs_output": SAMPLE_DOCS}}
+
+    monkeypatch.setattr("orchestrator.main._graph.stream", fake_stream)
+
+    res = client.post("/build/async", json={"user_prompt": "Build a task app"})
+    assert res.status_code == 200
+    data = res.json()
+    assert "task_id" in data
+    task_id = data["task_id"]
+
+    # Poll status
+    status_res = client.get(f"/build/status/{task_id}")
+    assert status_res.status_code == 200
+    task_data = status_res.json()
+    assert task_data["task_id"] == task_id
+    assert "status" in task_data
+    assert "agent_states" in task_data
+    assert "logs" in task_data
+    assert "progress_percent" in task_data
+    assert task_data["status"] in ("pending", "in_progress", "done")
+
