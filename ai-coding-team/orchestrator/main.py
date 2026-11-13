@@ -737,10 +737,11 @@ DASHBOARD_HTML = """<!DOCTYPE html>
           <a id="downloadBtn" href="#" class="btn-download">⬇️ Download Ready-to-Run (.ZIP)</a>
           
           <div class="run-guide">
-            <div><span># Quick Start Guide:</span></div>
-            <div>unzip &lt;app_name&gt;.zip &amp;&amp; cd &lt;app_name&gt;</div>
-            <div>cd backend &amp;&amp; npm install &amp;&amp; npm start <span># Starts Express API at :3000</span></div>
-            <div>cd ../frontend &amp;&amp; npm install &amp;&amp; npm run dev <span># Starts React Vite UI at :5173</span></div>
+            <div style="margin-bottom: 0.4rem;"><strong style="color: #34d399;">⚡ One-Click Run (Windows):</strong> Double-click <code style="color: #38bdf8;">start-dev.bat</code> inside the unzipped folder</div>
+            <div style="margin-bottom: 0.4rem;"><strong style="color: #34d399;">⚡ One-Click Run (macOS/Linux):</strong> Run <code style="color: #38bdf8;">bash start-dev.sh</code></div>
+            <div style="margin-top: 0.5rem; color: #64748b;"><span># Or Manual Commands:</span></div>
+            <div>cd backend &amp;&amp; npm install &amp;&amp; npm start <span># Express API on :3000</span></div>
+            <div>cd ../frontend &amp;&amp; npm install &amp;&amp; npm run dev <span># React UI on :5173</span></div>
           </div>
         </div>
       </div>

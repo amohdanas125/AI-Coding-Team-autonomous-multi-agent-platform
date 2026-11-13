@@ -172,7 +172,62 @@ def assemble_project(
         with open(file_path, "w", encoding="utf-8") as fh:
             fh.write(file_obj["content"])
 
-    # 6. Create Zip Archive
+    # 6. Add Root Monorepo Orchestration Scripts & Config
+    root_pkg = {
+        "name": f"{clean_name}-workspace",
+        "version": "1.0.0",
+        "private": True,
+        "description": f"Autonomous full-stack application: {clean_name}",
+        "scripts": {
+            "install:all": "npm install --prefix backend && npm install --prefix frontend",
+            "dev:backend": "npm start --prefix backend",
+            "dev:frontend": "npm run dev --prefix frontend",
+            "test:backend": "npm test --prefix backend",
+        },
+    }
+    with open(os.path.join(project_dir, "package.json"), "w", encoding="utf-8") as fh:
+        json.dump(root_pkg, fh, indent=2)
+
+    bat_content = (
+        "@echo off\n"
+        "title Launching Full-Stack Web Application\n"
+        "echo ========================================================\n"
+        "echo   AI CODING TEAM - AUTONOMOUS APPLICATION LAUNCHER\n"
+        "echo ========================================================\n"
+        "echo.\n"
+        "echo [1/2] Launching Express Backend Server on http://localhost:3000...\n"
+        'start "Backend Server (Port 3000)" cmd /k "cd /d ""%~dp0backend"" && npm install && npm start"\n'
+        "echo.\n"
+        "echo [2/2] Launching React Vite Frontend Client on http://localhost:5173...\n"
+        'start "Frontend Client (Port 5173)" cmd /k "cd /d ""%~dp0frontend"" && npm install && npm run dev"\n'
+        "echo.\n"
+        "echo ========================================================\n"
+        "echo Application is starting!\n"
+        "echo - Frontend UI:  http://localhost:5173\n"
+        "echo - Backend API:  http://localhost:3000\n"
+        "echo - Demo Login:   alice@example.com / Password123!\n"
+        "echo ========================================================\n"
+    )
+    with open(os.path.join(project_dir, "start-dev.bat"), "w", encoding="utf-8") as fh:
+        fh.write(bat_content)
+
+    sh_content = (
+        "#!/usr/bin/env bash\n"
+        'DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"\n'
+        'echo "========================================================"\n'
+        'echo "  AI CODING TEAM - AUTONOMOUS APPLICATION LAUNCHER"\n'
+        'echo "========================================================"\n'
+        'echo "1. Starting Backend Server on http://localhost:3000..."\n'
+        '(cd "$DIR/backend" && npm install && npm start) &\n'
+        'echo "2. Starting Frontend Client on http://localhost:5173..."\n'
+        '(cd "$DIR/frontend" && npm install && npm run dev) &\n'
+        'echo "Application started! Press Ctrl+C to terminate."\n'
+        "wait\n"
+    )
+    with open(os.path.join(project_dir, "start-dev.sh"), "w", encoding="utf-8") as fh:
+        fh.write(sh_content)
+
+    # 7. Create Zip Archive
     zip_base = os.path.join(output_base_dir, clean_name)
     zip_path = shutil.make_archive(zip_base, "zip", output_base_dir, clean_name)
 
