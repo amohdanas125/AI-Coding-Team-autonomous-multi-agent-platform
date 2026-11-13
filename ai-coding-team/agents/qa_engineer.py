@@ -60,7 +60,7 @@ File to produce, exactly this one path:
 - tests/<entity-name-lowercase>.test.js
 
 Structure:
-- beforeAll(async () => { await startTestDb(); }, 60000); and afterAll(async () => { await stopTestDb(); }, 60000); - the generous 60-second timeout matters, since starting the in-memory MongoDB can be slow on its very first run (it downloads the database binary).
+- beforeAll(async () => { await startTestDb(); }, 180000); and afterAll(async () => { await stopTestDb(); }, 60000); - the generous 180-second timeout matters, since starting the in-memory MongoDB can be slow on its very first run (it downloads the database binary).
 - One describe block for this entity.
 - For each GET endpoint with no :id segment (a list endpoint) in the given endpoints: a test that requests it with await request(app).get(path) (attach an Authorization: Bearer <token> header from await getAuthToken() first, only if requires_auth is true AND getAuthToken is available) and expects a 200 status with an array response body.
 - For each POST endpoint in the given endpoints: build the request body using the EXACT field names from that endpoint's request_body_fields. For any field with is_reference: true, query that field's references_entity's own Mongoose model with findOne() to get a real _id from the seeded data - never a hardcoded fake id. For every other field, use any plausible value of a matching type. Send it with await request(app).post(path).send(body) with an auth header if requires_auth is true and getAuthToken is available. Expect a 2xx status (expect(res.status).toBeGreaterThanOrEqual(200); expect(res.status).toBeLessThan(300);).
@@ -121,7 +121,9 @@ def _fake_field_value_js(field_name: str) -> str:
         return "`qa-test-${Date.now()}@example.com`"
     if "password" in lower:
         return "'TestPassword123!'"
-    return "'QA Test Value'"
+    if "user" in lower or "name" in lower:
+        return "`qa_user_${Date.now()}_${Math.random().toString(36).substring(7)}`"
+    return "`qa_val_${Date.now()}`"
 
 
 def _build_helpers_js(auth_endpoints: dict | None) -> str:
@@ -134,6 +136,7 @@ def _build_helpers_js(auth_endpoints: dict | None) -> str:
     lines = [
         "// Auto-generated shared test helpers - NOT LLM-written, deterministic",
         "// boilerplate every entity's test file uses via require('./helpers').",
+        "process.env.JWT_SECRET = process.env.JWT_SECRET || 'qa-sandbox-test-secret-do-not-use-in-production';",
         "const { MongoMemoryServer } = require('mongodb-memory-server');",
         "const mongoose = require('mongoose');",
         "const rawRequest = require('supertest');",
@@ -198,7 +201,7 @@ def _build_jest_config_js() -> str:
     return "\n".join([
         "module.exports = {",
         "  testEnvironment: 'node',",
-        "  testTimeout: 60000,",
+        "  testTimeout: 180000,",
         "};",
     ])
 

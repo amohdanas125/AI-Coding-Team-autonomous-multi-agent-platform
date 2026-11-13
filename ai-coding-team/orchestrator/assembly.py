@@ -105,16 +105,18 @@ def assemble_project(
         with open(jest_config_path, "w", encoding="utf-8") as fh:
             fh.write(_build_jest_config_js())
 
-    # Write backend .env.example
-    backend_env_example = os.path.join(backend_dir, ".env.example")
+    # Write backend .env and .env.example
     lines = [
         "PORT=3000",
         f"MONGODB_URI=mongodb://localhost:27017/{clean_name}",
     ]
     if spec.get("auth_required"):
         lines.append("JWT_SECRET=supersecret_jwt_secret_change_in_production")
-    with open(backend_env_example, "w", encoding="utf-8") as fh:
-        fh.write("\n".join(lines) + "\n")
+    env_content = "\n".join(lines) + "\n"
+    with open(os.path.join(backend_dir, ".env.example"), "w", encoding="utf-8") as fh:
+        fh.write(env_content)
+    with open(os.path.join(backend_dir, ".env"), "w", encoding="utf-8") as fh:
+        fh.write(env_content)
 
     # 4. Write Frontend Files
     for file_obj in frontend_output.get("files", []):
@@ -156,10 +158,12 @@ def assemble_project(
         with open(fe_pkg_path, "w", encoding="utf-8") as fh:
             json.dump(fe_pkg, fh, indent=2)
 
-    # Write frontend .env.example
-    frontend_env_example = os.path.join(frontend_dir, ".env.example")
-    with open(frontend_env_example, "w", encoding="utf-8") as fh:
-        fh.write("VITE_API_BASE_URL=http://localhost:3000\n")
+    # Write frontend .env and .env.example
+    fe_env_content = "VITE_API_BASE_URL=http://localhost:3000\n"
+    with open(os.path.join(frontend_dir, ".env.example"), "w", encoding="utf-8") as fh:
+        fh.write(fe_env_content)
+    with open(os.path.join(frontend_dir, ".env"), "w", encoding="utf-8") as fh:
+        fh.write(fe_env_content)
 
     # 5. Write Documentation Files in Project Root
     for file_obj in docs_output.get("files", []):

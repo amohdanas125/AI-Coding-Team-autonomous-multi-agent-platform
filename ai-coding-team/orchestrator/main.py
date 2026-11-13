@@ -13,6 +13,7 @@ import uuid
 from typing import Dict
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel
 
@@ -21,6 +22,13 @@ from orchestrator.graph import build_graph
 from orchestrator.state import initial_state
 
 app = FastAPI(title="AI Coding Team Orchestrator")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 _graph = build_graph()
 _build_tasks: Dict[str, dict] = {}
 
@@ -1132,6 +1140,9 @@ def _async_worker(task_id: str, user_prompt: str):
 @app.post("/build/async")
 def build_async(req: BuildRequest, background_tasks: BackgroundTasks):
     task_id = str(uuid.uuid4())
+    if len(_build_tasks) > 100:
+        oldest_key = next(iter(_build_tasks))
+        _build_tasks.pop(oldest_key, None)
     _build_tasks[task_id] = {
         "task_id": task_id,
         "status": "pending",
