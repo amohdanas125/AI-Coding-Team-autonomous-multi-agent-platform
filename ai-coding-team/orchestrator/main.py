@@ -804,7 +804,12 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         <span>AI Coding Team</span>
         <span class="badge"><span class="live-dot"></span> LangGraph Multi-Agent Engine</span>
       </div>
-      <a href="/docs" target="_blank" class="docs-link">Swagger API Docs ↗</a>
+      <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <button onclick="openCodePreview()" class="docs-link" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem;">
+          <span>👁️</span> <span>Preview Code</span>
+        </button>
+        <a href="/docs" target="_blank" class="docs-link">Swagger API Docs ↗</a>
+      </div>
     </div>
   </header>
 
@@ -1300,7 +1305,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       activeFileContent = fileObj.content || '';
       document.getElementById('activeFilePathBadge').textContent = filePath;
 
-      const lines = activeFileContent.split('\n');
+      const lines = activeFileContent.split(String.fromCharCode(10));
       document.getElementById('fileLinesCount').textContent = `${lines.length} lines`;
 
       // Update active tree item
