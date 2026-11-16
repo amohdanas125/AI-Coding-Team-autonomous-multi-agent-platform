@@ -220,3 +220,18 @@ def test_api_build_files_endpoint():
     assert any("package.json" in p for p in paths)
 
 
+def test_api_build_preview_endpoint():
+    # Test preview on existing project on disk
+    res = client.get("/build/preview/bookstore")
+    assert res.status_code == 200
+    assert "text/html" in res.headers.get("content-type", "")
+    assert "Live UI Sandbox" in res.text
+    assert "Tactile Neomorphism" in res.text
+
+    # Test preview with 'latest'
+    res_latest = client.get("/build/preview/latest")
+    assert res_latest.status_code == 200
+    assert "text/html" in res_latest.headers.get("content-type", "")
+
+
+

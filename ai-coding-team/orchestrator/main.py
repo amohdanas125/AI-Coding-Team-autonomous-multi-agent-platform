@@ -19,6 +19,7 @@ from pydantic import BaseModel
 
 from orchestrator.assembly import assemble_project
 from orchestrator.graph import build_graph
+from orchestrator.preview_generator import generate_live_preview_html
 from orchestrator.state import initial_state
 
 app = FastAPI(title="AI Coding Team Orchestrator")
@@ -794,6 +795,163 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       color: #94a3b8;
     }
     .run-guide span { color: #38bdf8; }
+
+    /* Modal View Mode Tabs */
+    .modal-tab-group {
+      display: flex;
+      background: #090e17;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 3px;
+      gap: 3px;
+    }
+    .modal-tab-btn {
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.35rem 0.85rem;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+    .modal-tab-btn:hover {
+      color: #f1f5f9;
+    }
+    .modal-tab-btn.active {
+      background: #1e293b;
+      color: #38bdf8;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    /* Live UI Preview Pane */
+    .ui-preview-container {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      height: 100%;
+      background: #0b1120;
+      overflow: hidden;
+    }
+    .ui-preview-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 1.25rem;
+      background: #070d18;
+      border-bottom: 1px solid #1e293b;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .preview-device-group {
+      display: flex;
+      gap: 0.35rem;
+      background: #030712;
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid #1e293b;
+    }
+    .device-btn {
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+    .device-btn:hover {
+      color: #f1f5f9;
+    }
+    .device-btn.active {
+      background: #1e293b;
+      color: #38bdf8;
+    }
+    .preview-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .btn-dev-server {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.35rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+    .btn-dev-server:hover {
+      background: rgba(16, 185, 129, 0.25);
+    }
+    .btn-preview-ext {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #38bdf8;
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.35rem 0.8rem;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .btn-preview-ext:hover {
+      background: rgba(56, 189, 248, 0.22);
+    }
+    .ui-preview-viewport {
+      flex: 1;
+      height: 100%;
+      background: #020617;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.75rem;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .ui-preview-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 8px;
+      background: #e6ecf5;
+      transition: width 0.3s ease, border-radius 0.3s ease;
+    }
+    .btn-preview-ui {
+      background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+      color: #ffffff;
+      border: none;
+      padding: 0.7rem 1.4rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 14px rgba(6, 182, 212, 0.35);
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .btn-preview-ui:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5);
+    }
   </style>
 </head>
 <body>
@@ -804,7 +962,10 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         <span>AI Coding Team</span>
         <span class="badge"><span class="live-dot"></span> LangGraph Multi-Agent Engine</span>
       </div>
-      <div style="display: flex; gap: 0.75rem; align-items: center;">
+      <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+        <button onclick="openUiPreview()" class="docs-link" style="background: rgba(6, 182, 212, 0.18); border: 1px solid rgba(6, 182, 212, 0.4); color: #38bdf8; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 600;">
+          <span>🎨</span> <span>Live Website UI</span>
+        </button>
         <button onclick="openCodePreview()" class="docs-link" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem;">
           <span>👁️</span> <span>Preview Code</span>
         </button>
@@ -950,6 +1111,9 @@ DASHBOARD_HTML = """<!DOCTYPE html>
           <h3 id="resultTitle">🎉 Application Assembled Successfully!</h3>
           <p id="resultDesc">All 5 agents verified the application code. Production package is ready.</p>
           <div style="display: flex; gap: 0.85rem; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 1.25rem;">
+            <button id="previewUiBtn" class="btn-preview-ui" onclick="openUiPreview()">
+              <span>🎨</span> <span>View Live Website UI</span>
+            </button>
             <button id="previewBtn" class="btn-preview" onclick="openCodePreview()">
               <span>👁️</span> <span>Preview Code &amp; Files</span>
             </button>
@@ -970,7 +1134,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     </div>
   </main>
 
-  <!-- Interactive Code Explorer Modal -->
+  <!-- Interactive Code Explorer & Live UI Preview Modal -->
   <div id="codeModal" class="code-modal-overlay" style="display: none;">
     <div class="code-modal-container">
       <div class="code-modal-header">
@@ -980,6 +1144,17 @@ DASHBOARD_HTML = """<!DOCTYPE html>
           <span id="activeFilePathBadge" class="file-path-badge">backend/server.js</span>
           <span id="fileLinesCount" class="file-lines-badge">0 lines</span>
         </div>
+
+        <!-- Segmented Mode Tabs: Code Viewer vs Live UI Preview -->
+        <div class="modal-tab-group">
+          <button id="modalTabCode" class="modal-tab-btn active" onclick="switchModalTab('code')">
+            <span>💻</span> <span>Source Code</span>
+          </button>
+          <button id="modalTabPreview" class="modal-tab-btn" onclick="switchModalTab('preview')">
+            <span>🎨</span> <span>Live UI Preview</span>
+          </button>
+        </div>
+
         <div style="display: flex; align-items: center; gap: 0.75rem;">
           <button id="copyCodeBtn" class="btn-copy" onclick="copyActiveCode()">
             <span>📋</span> <span id="copyBtnText">Copy Code</span>
@@ -988,16 +1163,37 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         </div>
       </div>
       <div class="code-modal-body">
-        <div class="code-sidebar">
-          <div class="sidebar-search-box">
-            <input type="text" id="fileSearchInput" placeholder="🔍 Filter files..." oninput="filterFiles(this.value)" />
+        <!-- 1. Source Code View -->
+        <div id="codeViewContainer" style="display: flex; flex: 1; overflow: hidden; width: 100%;">
+          <div class="code-sidebar">
+            <div class="sidebar-search-box">
+              <input type="text" id="fileSearchInput" placeholder="🔍 Filter files..." oninput="filterFiles(this.value)" />
+            </div>
+            <div id="fileTreeContainer" class="file-tree">
+              <!-- Files populated dynamically -->
+            </div>
           </div>
-          <div id="fileTreeContainer" class="file-tree">
-            <!-- Files populated dynamically -->
+          <div class="code-viewer-pane">
+            <div id="codeViewerContent">Select a file from the explorer on the left...</div>
           </div>
         </div>
-        <div class="code-viewer-pane">
-          <div id="codeViewerContent">Select a file from the explorer on the left...</div>
+
+        <!-- 2. Live UI Preview View -->
+        <div id="uiPreviewContainer" class="ui-preview-container" style="display: none; width: 100%;">
+          <div class="ui-preview-toolbar">
+            <div class="preview-device-group">
+              <button class="device-btn active" id="btnDevDesktop" onclick="setPreviewDevice('desktop')">🖥️ Desktop</button>
+              <button class="device-btn" id="btnDevTablet" onclick="setPreviewDevice('tablet')">💻 Tablet (768px)</button>
+              <button class="device-btn" id="btnDevMobile" onclick="setPreviewDevice('mobile')">📱 Mobile (375px)</button>
+            </div>
+            <div class="preview-actions-group">
+              <button class="btn-dev-server" onclick="showLocalDevGuide()">⚡ Run Vite Locally</button>
+              <a id="btnOpenNewTab" href="/build/preview/latest" target="_blank" class="btn-preview-ext">↗ Open Fullscreen</a>
+            </div>
+          </div>
+          <div class="ui-preview-viewport" id="previewViewport">
+            <iframe id="uiPreviewIframe" class="ui-preview-iframe" src="about:blank"></iframe>
+          </div>
         </div>
       </div>
     </div>
@@ -1347,10 +1543,102 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       });
     }
 
+    let currentModalTab = 'code';
+
+    function switchModalTab(tab) {
+      currentModalTab = tab;
+      const codeTabBtn = document.getElementById('modalTabCode');
+      const prevTabBtn = document.getElementById('modalTabPreview');
+      const codeContainer = document.getElementById('codeViewContainer');
+      const uiContainer = document.getElementById('uiPreviewContainer');
+      const copyBtn = document.getElementById('copyCodeBtn');
+      const pathBadge = document.getElementById('activeFilePathBadge');
+      const linesBadge = document.getElementById('fileLinesCount');
+
+      if (tab === 'preview') {
+        if (codeTabBtn) codeTabBtn.className = 'modal-tab-btn';
+        if (prevTabBtn) prevTabBtn.className = 'modal-tab-btn active';
+        if (codeContainer) codeContainer.style.display = 'none';
+        if (uiContainer) uiContainer.style.display = 'flex';
+        if (copyBtn) copyBtn.style.display = 'none';
+        if (pathBadge) pathBadge.style.display = 'none';
+        if (linesBadge) linesBadge.style.display = 'none';
+
+        const tid = currentTaskId || 'latest';
+        const targetUrl = '/build/preview/' + tid;
+        const iframe = document.getElementById('uiPreviewIframe');
+        if (iframe && (!iframe.src || !iframe.src.includes(targetUrl))) {
+          iframe.src = targetUrl;
+        }
+        const openBtn = document.getElementById('btnOpenNewTab');
+        if (openBtn) openBtn.href = targetUrl;
+      } else {
+        if (codeTabBtn) codeTabBtn.className = 'modal-tab-btn active';
+        if (prevTabBtn) prevTabBtn.className = 'modal-tab-btn';
+        if (codeContainer) codeContainer.style.display = 'flex';
+        if (uiContainer) uiContainer.style.display = 'none';
+        if (copyBtn) copyBtn.style.display = 'inline-flex';
+        if (pathBadge) pathBadge.style.display = 'inline-block';
+        if (linesBadge) linesBadge.style.display = 'inline-block';
+      }
+    }
+
+    function openUiPreview(taskId) {
+      if (taskId) currentTaskId = taskId;
+      openCodePreview();
+      switchModalTab('preview');
+    }
+
+    function setPreviewDevice(device) {
+      const btnDesk = document.getElementById('btnDevDesktop');
+      const btnTab = document.getElementById('btnDevTablet');
+      const btnMob = document.getElementById('btnDevMobile');
+      const iframe = document.getElementById('uiPreviewIframe');
+      if (!iframe) return;
+
+      if (btnDesk) btnDesk.className = 'device-btn' + (device === 'desktop' ? ' active' : '');
+      if (btnTab) btnTab.className = 'device-btn' + (device === 'tablet' ? ' active' : '');
+      if (btnMob) btnMob.className = 'device-btn' + (device === 'mobile' ? ' active' : '');
+
+      if (device === 'mobile') {
+        iframe.style.width = '375px';
+        iframe.style.boxShadow = '0 20px 40px rgba(0,0,0,0.6)';
+        iframe.style.border = '10px solid #1e293b';
+        iframe.style.borderRadius = '32px';
+      } else if (device === 'tablet') {
+        iframe.style.width = '768px';
+        iframe.style.boxShadow = '0 20px 40px rgba(0,0,0,0.5)';
+        iframe.style.border = '6px solid #1e293b';
+        iframe.style.borderRadius = '16px';
+      } else {
+        iframe.style.width = '100%';
+        iframe.style.boxShadow = 'none';
+        iframe.style.border = 'none';
+        iframe.style.borderRadius = '8px';
+      }
+    }
+
+    function showLocalDevGuide() {
+      const cleanName = (projectFiles[0] && projectFiles[0].path.split('/')[0]) || 'app';
+      const nl = String.fromCharCode(10);
+      const cmd = 'cd output/' + cleanName + '/frontend' + nl + 'npm install' + nl + 'npm run dev';
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(cmd);
+      }
+      alert(
+        '⚡ Quick Local Dev Server Commands (Copied to Clipboard!):' + nl + nl +
+        '1. Open your terminal' + nl +
+        '2. Run:' + nl +
+        '   cd output/' + cleanName + '/frontend' + nl +
+        '   npm install' + nl +
+        '   npm run dev' + nl + nl +
+        '3. Your app opens on http://localhost:5173!'
+      );
+    }
+
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeCodePreview();
     });
-  </script>
   </script>
 </body>
 </html>
@@ -1575,9 +1863,8 @@ def build_status(task_id: str):
     return task
 
 
-@app.get("/build/files/{task_id}")
-def build_files(task_id: str):
-    """Retrieve all generated source code files for a given build task or disk project."""
+def _get_project_data(task_id: str):
+    """Retrieve project metadata and files from memory or disk in output/."""
     task = _build_tasks.get(task_id)
     files = []
     clean_name = "app"
@@ -1642,12 +1929,27 @@ def build_files(task_id: str):
                 files.append({"path": rel, "content": content})
 
     files.sort(key=lambda x: x["path"])
+    return clean_name, app_name, files
+
+
+@app.get("/build/files/{task_id}")
+def build_files(task_id: str):
+    """Retrieve all generated source code files for a given build task or disk project."""
+    clean_name, app_name, files = _get_project_data(task_id)
     return {
         "task_id": task_id,
         "clean_name": clean_name,
         "app_name": app_name,
         "files": files,
     }
+
+
+@app.get("/build/preview/{task_id}", response_class=HTMLResponse)
+def build_preview(task_id: str):
+    """Render a live, interactive Neomorphic web application preview for a given task or disk project."""
+    clean_name, app_name, files = _get_project_data(task_id)
+    preview_html = generate_live_preview_html(task_id, app_name, clean_name, files)
+    return HTMLResponse(content=preview_html)
 
 
 @app.get("/download/{clean_name}")
