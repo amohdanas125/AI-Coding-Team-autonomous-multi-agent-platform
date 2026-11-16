@@ -54,29 +54,48 @@ DASHBOARD_HTML = """<!DOCTYPE html>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
+      /* Primary Brand Colors */
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #e0e7ff;
       --cyan: #06b6d4;
-      --cyan-glow: #38bdf8;
+      --cyan-glow: #0284c7;
       --success: #10b981;
       --warning: #f59e0b;
       --danger: #ef4444;
-      --bg: #080c14;
-      --surface: #0f172a;
-      --surface-border: #1e293b;
-      --surface-hover: #1e293b;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --radius: 12px;
-      --radius-sm: 8px;
+
+      /* Light Canvas & Frosted Glass Surfaces */
+      --bg: #f8fafc;
+      --text: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+
+      /* Glassmorphism Specs */
+      --glass-bg: rgba(255, 255, 255, 0.72);
+      --glass-bg-hover: rgba(255, 255, 255, 0.9);
+      --glass-card: rgba(255, 255, 255, 0.65);
+      --glass-border: rgba(255, 255, 255, 0.85);
+      --glass-border-subtle: rgba(226, 232, 240, 0.85);
+      --glass-shadow: 0 20px 50px -10px rgba(31, 38, 135, 0.07), 0 1px 3px rgba(0, 0, 0, 0.04);
+      --glass-shadow-lg: 0 25px 60px -15px rgba(31, 38, 135, 0.12), 0 0 1px 1px rgba(255, 255, 255, 0.9);
+      --glass-blur: blur(20px) saturate(180%);
+
+      /* Radii */
+      --radius: 20px;
+      --radius-sm: 10px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       background-color: var(--bg);
       background-image: 
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.18), transparent),
-        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(6, 182, 212, 0.08), transparent);
+        radial-gradient(circle at 10% 12%, rgba(99, 102, 241, 0.18), transparent 35%),
+        radial-gradient(circle at 90% 18%, rgba(6, 182, 212, 0.18), transparent 35%),
+        radial-gradient(circle at 50% 55%, rgba(244, 63, 94, 0.08), transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.12), transparent 40%),
+        radial-gradient(circle at 15% 82%, rgba(139, 92, 246, 0.14), transparent 40%);
+      background-attachment: fixed;
       color: var(--text);
       line-height: 1.5;
       min-height: 100vh;
@@ -84,10 +103,12 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       flex-direction: column;
     }
     .header {
-      border-bottom: 1px solid var(--surface-border);
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(12px);
-      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.03);
+      padding: 0.9rem 1.5rem;
       position: sticky;
       top: 0;
       z-index: 50;
@@ -106,19 +127,21 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       font-size: 1.25rem;
       font-weight: 800;
       letter-spacing: -0.02em;
-      color: #fff;
+      color: #0f172a;
     }
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      background: rgba(59, 130, 246, 0.15);
-      color: #60a5fa;
-      border: 1px solid rgba(59, 130, 246, 0.35);
-      padding: 0.25rem 0.65rem;
+      gap: 0.45rem;
+      background: rgba(236, 253, 245, 0.85);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 0.25rem 0.75rem;
       border-radius: 9999px;
       font-size: 0.75rem;
-      font-weight: 600;
+      font-weight: 700;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.08);
     }
     .live-dot {
       width: 6px;
@@ -130,19 +153,24 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     }
     @keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.85); } }
     .docs-link {
-      color: var(--text-muted);
+      color: var(--text-secondary);
       text-decoration: none;
       font-size: 0.875rem;
       font-weight: 600;
-      padding: 0.4rem 0.85rem;
+      padding: 0.45rem 0.95rem;
       border-radius: var(--radius-sm);
-      border: 1px solid transparent;
-      transition: all 0.15s;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+      transition: all 0.2s ease;
     }
     .docs-link:hover {
-      color: #fff;
-      background: var(--surface-border);
-      border-color: rgba(255, 255, 255, 0.1);
+      color: var(--primary);
+      background: rgba(255, 255, 255, 0.95);
+      border-color: rgba(99, 102, 241, 0.3);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.12);
     }
     .container {
       max-width: 960px;
@@ -157,110 +185,124 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     }
     .hero-tag {
       display: inline-block;
-      background: rgba(6, 182, 212, 0.1);
-      color: var(--cyan-glow);
-      border: 1px solid rgba(6, 182, 212, 0.25);
-      padding: 0.3rem 0.85rem;
+      background: rgba(255, 255, 255, 0.85);
+      color: var(--primary);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.08);
+      padding: 0.35rem 0.95rem;
       border-radius: 9999px;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      margin-bottom: 1rem;
+      margin-bottom: 1.1rem;
+      backdrop-filter: blur(10px);
     }
     .hero h1 {
-      font-size: 2.5rem;
+      font-size: 2.65rem;
       font-weight: 800;
-      letter-spacing: -0.03em;
-      margin-bottom: 0.75rem;
-      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+      letter-spacing: -0.035em;
+      margin-bottom: 0.85rem;
+      background: linear-gradient(135deg, #0f172a 0%, #312e81 60%, #1e1b4b 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
     .hero p {
-      color: var(--text-muted);
-      font-size: 1.05rem;
-      max-width: 650px;
+      color: var(--text-secondary);
+      font-size: 1.08rem;
+      max-width: 660px;
       margin: 0 auto;
+      line-height: 1.6;
     }
     .card {
-      background: var(--surface);
-      border: 1px solid var(--surface-border);
+      background: var(--glass-card);
+      border: 1px solid var(--glass-border);
       border-radius: var(--radius);
-      padding: 2rem;
-      box-shadow: 0 25px 40px -15px rgba(0, 0, 0, 0.7);
+      padding: 2.25rem;
+      box-shadow: var(--glass-shadow-lg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
       margin-bottom: 2rem;
       position: relative;
     }
     label {
       display: block;
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: #cbd5e1;
-      margin-bottom: 0.6rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.65rem;
     }
     textarea {
       width: 100%;
-      background: #090e17;
-      border: 1px solid var(--surface-border);
+      background: rgba(255, 255, 255, 0.75);
+      border: 1.5px solid rgba(203, 213, 225, 0.85);
       border-radius: var(--radius-sm);
-      color: #fff;
+      color: var(--text);
       font-family: inherit;
       font-size: 1.02rem;
-      padding: 1.1rem;
+      padding: 1.15rem;
       min-height: 110px;
       resize: vertical;
       outline: none;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.02);
+      backdrop-filter: blur(10px);
       transition: all 0.2s ease;
     }
     textarea:focus {
+      background: rgba(255, 255, 255, 0.95);
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25), 0 0 15px rgba(59, 130, 246, 0.15);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15), inset 0 1px 2px rgba(0, 0, 0, 0.02);
+    }
+    textarea::placeholder {
+      color: var(--text-light);
     }
     .suggestions {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
-      margin: 0.85rem 0 1.5rem;
+      gap: 0.55rem;
+      margin: 1rem 0 1.6rem;
     }
     .pill {
-      background: rgba(30, 41, 59, 0.7);
-      color: #94a3b8;
-      border: 1px solid #334155;
-      padding: 0.35rem 0.85rem;
+      background: rgba(255, 255, 255, 0.65);
+      color: var(--text-secondary);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      padding: 0.4rem 0.9rem;
       border-radius: 9999px;
-      font-size: 0.8rem;
-      font-weight: 500;
+      font-size: 0.82rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.15s;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
     }
     .pill:hover {
-      background: #334155;
-      color: #fff;
-      border-color: #64748b;
-      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--primary);
+      border-color: rgba(99, 102, 241, 0.35);
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.12);
+      transform: translateY(-2px);
     }
     .btn-submit {
       width: 100%;
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-      color: white;
+      background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 50%, #06b6d4 100%);
+      color: #ffffff;
       font-weight: 700;
       font-size: 1.05rem;
-      padding: 1rem;
+      padding: 1.05rem;
       border-radius: var(--radius-sm);
-      border: none;
+      border: 1px solid rgba(255, 255, 255, 0.35);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.6rem;
-      box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.4);
-      transition: all 0.2s;
+      gap: 0.65rem;
+      box-shadow: 0 12px 28px -6px rgba(79, 70, 229, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .btn-submit:hover {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      transform: translateY(-1px);
-      box-shadow: 0 12px 24px -5px rgba(59, 130, 246, 0.6);
+      background: linear-gradient(135deg, #4338ca 0%, #2563eb 50%, #0891b2 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px -6px rgba(79, 70, 229, 0.55);
     }
     .btn-submit:disabled {
       opacity: 0.6;
@@ -273,15 +315,17 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     .pipeline-status {
       display: none;
       margin-top: 2rem;
-      border-top: 1px solid var(--surface-border);
+      border-top: 1px solid var(--glass-border-subtle);
       padding-top: 2rem;
     }
     .status-bar-box {
-      background: #090e17;
-      border: 1px solid var(--surface-border);
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--glass-border);
       border-radius: var(--radius-sm);
-      padding: 1rem 1.25rem;
+      padding: 1.1rem 1.35rem;
       margin-bottom: 1.5rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+      backdrop-filter: blur(12px);
     }
     .status-top-row {
       display: flex;
@@ -304,8 +348,8 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     }
     .progress-track {
       width: 100%;
-      height: 8px;
-      background: #1e293b;
+      height: 9px;
+      background: rgba(226, 232, 240, 0.85);
       border-radius: 9999px;
       overflow: hidden;
       position: relative;
@@ -313,17 +357,17 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     .progress-fill {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 50%, #10b981 100%);
+      background: linear-gradient(90deg, #4f46e5 0%, #06b6d4 50%, #10b981 100%);
       border-radius: 9999px;
       transition: width 0.4s ease;
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
     }
 
     .spinner {
       width: 18px;
       height: 18px;
-      border: 2.5px solid rgba(255, 255, 255, 0.2);
-      border-top-color: var(--cyan-glow);
+      border: 2.5px solid rgba(79, 70, 229, 0.2);
+      border-top-color: var(--primary);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
       display: inline-block;
@@ -342,21 +386,23 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      background: #090e17;
-      border: 1px solid var(--surface-border);
-      padding: 0.95rem 1.25rem;
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid var(--glass-border);
+      padding: 1rem 1.35rem;
       border-radius: var(--radius-sm);
-      transition: all 0.3s ease;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+      backdrop-filter: blur(12px);
+      transition: all 0.25s ease;
     }
     .agent-card.active {
-      border-color: var(--cyan-glow);
-      background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(15, 23, 42, 0.95) 100%);
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
+      border-color: #6366f1;
+      background: rgba(238, 242, 255, 0.85);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.16);
       animation: pulseAgent 2s infinite ease-in-out;
     }
     @keyframes pulseAgent {
-      0%, 100% { border-color: rgba(56, 189, 248, 0.4); box-shadow: 0 0 12px rgba(56, 189, 248, 0.2); }
-      50% { border-color: rgba(56, 189, 248, 0.95); box-shadow: 0 0 22px rgba(56, 189, 248, 0.5); }
+      0%, 100% { border-color: rgba(99, 102, 241, 0.4); box-shadow: 0 4px 14px rgba(99, 102, 241, 0.15); }
+      50% { border-color: rgba(99, 102, 241, 0.95); box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3); }
     }
     .agent-left {
       display: flex;
@@ -366,10 +412,12 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     }
     .agent-icon {
       font-size: 1.35rem;
-      width: 38px;
-      height: 38px;
-      background: #1e293b;
-      border-radius: 8px;
+      width: 42px;
+      height: 42px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -380,11 +428,11 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     }
     .agent-name {
       font-weight: 700;
-      font-size: 0.95rem;
-      color: #fff;
+      font-size: 0.98rem;
+      color: #0f172a;
     }
     .agent-detail {
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       color: var(--text-muted);
       margin-top: 0.15rem;
     }
@@ -392,39 +440,41 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.78rem;
       font-weight: 600;
-      padding: 0.3rem 0.75rem;
+      padding: 0.35rem 0.8rem;
       border-radius: 9999px;
-      background: #1e293b;
-      color: #94a3b8;
-      border: 1px solid #334155;
+      background: rgba(241, 245, 249, 0.85);
+      color: var(--text-secondary);
+      border: 1px solid rgba(203, 213, 225, 0.7);
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
     }
     .agent-state-pill.active {
-      background: rgba(6, 182, 212, 0.15);
-      color: var(--cyan-glow);
-      border-color: rgba(6, 182, 212, 0.4);
+      background: rgba(238, 242, 255, 0.95);
+      color: #4f46e5;
+      border-color: rgba(99, 102, 241, 0.4);
     }
     .agent-state-pill.done {
-      background: rgba(16, 185, 129, 0.15);
-      color: #34d399;
+      background: rgba(236, 253, 245, 0.95);
+      color: #059669;
       border-color: rgba(16, 185, 129, 0.4);
     }
     .agent-state-pill.retry {
-      background: rgba(245, 158, 11, 0.15);
-      color: #fbbf24;
+      background: rgba(254, 243, 199, 0.95);
+      color: #d97706;
       border-color: rgba(245, 158, 11, 0.4);
     }
 
     /* Live Architecture Blueprint */
     .blueprint-box {
       display: none;
-      background: #090e17;
-      border: 1px solid #334155;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--glass-border);
       border-radius: var(--radius-sm);
-      padding: 1rem 1.25rem;
+      padding: 1.1rem 1.35rem;
       margin-bottom: 1.5rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+      backdrop-filter: blur(12px);
     }
     .blueprint-header {
       display: flex;
@@ -435,7 +485,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     .blueprint-title {
       font-size: 0.85rem;
       font-weight: 700;
-      color: #cbd5e1;
+      color: var(--text);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       display: flex;
@@ -448,37 +498,40 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       gap: 0.45rem;
     }
     .chip {
-      background: rgba(59, 130, 246, 0.15);
-      color: #60a5fa;
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      padding: 0.25rem 0.65rem;
-      border-radius: 6px;
+      background: rgba(238, 242, 255, 0.85);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      padding: 0.3rem 0.7rem;
+      border-radius: 8px;
       font-size: 0.78rem;
       font-weight: 600;
       font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 4px rgba(99, 102, 241, 0.05);
     }
     .chip-endpoint {
-      background: rgba(6, 182, 212, 0.15);
-      color: var(--cyan-glow);
+      background: rgba(240, 249, 255, 0.85);
+      color: #0284c7;
       border-color: rgba(6, 182, 212, 0.3);
     }
 
     /* Terminal Console */
     .terminal-window {
-      background: #030712;
-      border: 1px solid #1f2937;
-      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 16px;
       overflow: hidden;
       margin-bottom: 1.5rem;
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
     }
     .terminal-topbar {
-      background: #111827;
-      padding: 0.55rem 0.95rem;
+      background: rgba(30, 41, 59, 0.85);
+      padding: 0.65rem 1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid #1f2937;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     .terminal-dots {
       display: flex;
@@ -501,7 +554,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.82rem;
       line-height: 1.65;
-      padding: 1rem;
+      padding: 1.15rem;
       max-height: 250px;
       overflow-y: auto;
       color: #e2e8f0;
@@ -525,7 +578,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       display: inline-block;
       width: 8px;
       height: 14px;
-      background: var(--cyan-glow);
+      background: #38bdf8;
       vertical-align: middle;
       margin-left: 4px;
       animation: blink 1s infinite;
@@ -535,24 +588,26 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     /* Result Download Card */
     .result-card {
       display: none;
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      padding: 1.75rem;
+      background: linear-gradient(135deg, rgba(236, 253, 245, 0.9) 0%, rgba(240, 253, 250, 0.85) 100%);
+      border: 1.5px solid rgba(16, 185, 129, 0.35);
+      padding: 2rem;
       border-radius: var(--radius);
       text-align: center;
+      box-shadow: 0 20px 50px rgba(16, 185, 129, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(16px);
       animation: fadeIn 0.4s ease;
     }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     .result-card h3 {
-      font-size: 1.45rem;
-      color: #34d399;
+      font-size: 1.5rem;
+      color: #059669;
       font-weight: 800;
       margin-bottom: 0.5rem;
     }
     .result-card p {
-      color: #cbd5e1;
-      font-size: 0.95rem;
-      margin-bottom: 1.25rem;
+      color: #334155;
+      font-size: 0.98rem;
+      margin-bottom: 1.5rem;
     }
     .btn-download {
       display: inline-flex;
@@ -598,8 +653,9 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     .code-modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(3, 7, 18, 0.88);
-      backdrop-filter: blur(12px);
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       z-index: 9999;
       display: flex;
       align-items: center;
@@ -609,14 +665,16 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     .code-modal-container {
       width: 95vw;
       max-width: 1320px;
-      height: 86vh;
-      background: #090e17;
-      border: 1px solid #1e293b;
-      border-radius: 16px;
+      height: 88vh;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(28px) saturate(190%);
+      -webkit-backdrop-filter: blur(28px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(59, 130, 246, 0.15);
+      box-shadow: 0 30px 80px -15px rgba(15, 23, 42, 0.25), 0 0 1px 1px rgba(255, 255, 255, 0.9);
       animation: modalZoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     @keyframes modalZoomIn {
@@ -627,21 +685,23 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.85rem 1.25rem;
-      background: #0c121e;
-      border-bottom: 1px solid #1e293b;
+      padding: 0.95rem 1.5rem;
+      background: rgba(255, 255, 255, 0.75);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+      backdrop-filter: blur(16px);
     }
     .code-modal-title {
       display: flex;
       align-items: center;
       gap: 0.75rem;
       font-size: 0.95rem;
+      color: #0f172a;
     }
     .file-path-badge {
-      background: rgba(59, 130, 246, 0.15);
-      color: #60a5fa;
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      padding: 0.2rem 0.65rem;
+      background: rgba(238, 242, 255, 0.9);
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 0.25rem 0.7rem;
       border-radius: 6px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.8rem;
@@ -652,35 +712,37 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       font-size: 0.78rem;
     }
     .btn-copy {
-      background: #1e293b;
-      color: #94a3b8;
-      border: 1px solid #334155;
-      border-radius: 6px;
-      padding: 0.45rem 0.85rem;
-      font-size: 0.8rem;
+      background: #ffffff;
+      color: #334155;
+      border: 1px solid rgba(203, 213, 225, 0.85);
+      border-radius: 8px;
+      padding: 0.45rem 0.95rem;
+      font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 0.4rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
       transition: all 0.15s;
     }
     .btn-copy:hover {
-      background: #334155;
-      color: #fff;
+      background: rgba(248, 250, 252, 0.95);
+      color: #0f172a;
+      border-color: #94a3b8;
     }
     .btn-close-modal {
       background: transparent;
-      color: #94a3b8;
+      color: #64748b;
       border: none;
       font-size: 1.3rem;
       cursor: pointer;
       padding: 0.25rem 0.6rem;
-      border-radius: 6px;
+      border-radius: 8px;
       transition: all 0.15s;
     }
     .btn-close-modal:hover {
-      background: rgba(239, 68, 68, 0.2);
+      background: rgba(239, 68, 68, 0.1);
       color: #ef4444;
     }
     .code-modal-body {
@@ -690,8 +752,8 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     }
     .code-sidebar {
       width: 320px;
-      background: #060a12;
-      border-right: 1px solid #1e293b;
+      background: rgba(248, 250, 252, 0.85);
+      border-right: 1px solid rgba(226, 232, 240, 0.85);
       display: flex;
       flex-direction: column;
       overflow-y: auto;
@@ -699,22 +761,24 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     }
     .sidebar-search-box {
       padding: 0.75rem 1rem;
-      border-bottom: 1px solid #1e293b;
-      background: #090e17;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+      background: rgba(255, 255, 255, 0.6);
     }
     .sidebar-search-box input {
       width: 100%;
-      background: #030712;
-      border: 1px solid #1e293b;
-      border-radius: 6px;
-      padding: 0.45rem 0.75rem;
-      color: #f1f5f9;
-      font-size: 0.8rem;
+      background: #ffffff;
+      border: 1px solid rgba(203, 213, 225, 0.85);
+      border-radius: 8px;
+      padding: 0.5rem 0.85rem;
+      color: #0f172a;
+      font-size: 0.82rem;
       font-family: inherit;
       outline: none;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
     }
     .sidebar-search-box input:focus {
-      border-color: #3b82f6;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
     }
     .file-tree {
       flex: 1;
@@ -735,12 +799,12 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       gap: 0.45rem;
     }
     .file-item {
-      padding: 0.4rem 1rem 0.4rem 1.4rem;
+      padding: 0.45rem 1rem 0.45rem 1.4rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
       cursor: pointer;
-      color: #94a3b8;
+      color: #475569;
       transition: all 0.15s ease;
       border-left: 2px solid transparent;
       white-space: nowrap;
@@ -748,18 +812,18 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       text-overflow: ellipsis;
     }
     .file-item:hover {
-      background: rgba(30, 41, 59, 0.4);
-      color: #f8fafc;
+      background: rgba(241, 245, 249, 0.85);
+      color: #0f172a;
     }
     .file-item.active {
-      background: rgba(59, 130, 246, 0.14);
-      color: #60a5fa;
-      border-left-color: #3b82f6;
-      font-weight: 600;
+      background: rgba(238, 242, 255, 0.9);
+      color: #4f46e5;
+      border-left-color: #4f46e5;
+      font-weight: 700;
     }
     .code-viewer-pane {
       flex: 1;
-      background: #030712;
+      background: #0f172a;
       overflow: auto;
       padding: 1.25rem 1.5rem;
       font-family: 'JetBrains Mono', monospace;
@@ -784,35 +848,36 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       tab-size: 2;
     }
     .run-guide {
-      margin-top: 1.25rem;
-      background: #030712;
-      border: 1px solid #1f2937;
+      margin-top: 1.5rem;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: var(--radius-sm);
-      padding: 0.85rem 1rem;
+      padding: 1rem 1.25rem;
       text-align: left;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       color: #94a3b8;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     }
     .run-guide span { color: #38bdf8; }
 
     /* Modal View Mode Tabs */
     .modal-tab-group {
       display: flex;
-      background: #090e17;
-      border: 1px solid #1e293b;
-      border-radius: 8px;
+      background: rgba(241, 245, 249, 0.85);
+      border: 1px solid rgba(203, 213, 225, 0.8);
+      border-radius: 10px;
       padding: 3px;
       gap: 3px;
     }
     .modal-tab-btn {
       border: none;
       background: transparent;
-      color: #94a3b8;
-      font-size: 0.8rem;
+      color: #64748b;
+      font-size: 0.82rem;
       font-weight: 600;
-      padding: 0.35rem 0.85rem;
-      border-radius: 6px;
+      padding: 0.4rem 0.95rem;
+      border-radius: 8px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -821,12 +886,13 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       font-family: inherit;
     }
     .modal-tab-btn:hover {
-      color: #f1f5f9;
+      color: #0f172a;
     }
     .modal-tab-btn.active {
-      background: #1e293b;
-      color: #38bdf8;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      background: #ffffff;
+      color: #4f46e5;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      font-weight: 700;
     }
 
     /* Live UI Preview Pane */
@@ -835,32 +901,33 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       flex-direction: column;
       flex: 1;
       height: 100%;
-      background: #0b1120;
+      background: #f1f5f9;
       overflow: hidden;
     }
     .ui-preview-toolbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.6rem 1.25rem;
-      background: #070d18;
-      border-bottom: 1px solid #1e293b;
+      padding: 0.75rem 1.5rem;
+      background: rgba(255, 255, 255, 0.8);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.9);
       flex-shrink: 0;
       flex-wrap: wrap;
       gap: 0.5rem;
+      backdrop-filter: blur(12px);
     }
     .preview-device-group {
       display: flex;
       gap: 0.35rem;
-      background: #030712;
+      background: rgba(241, 245, 249, 0.85);
       padding: 3px;
       border-radius: 8px;
-      border: 1px solid #1e293b;
+      border: 1px solid rgba(203, 213, 225, 0.8);
     }
     .device-btn {
       border: none;
       background: transparent;
-      color: #94a3b8;
+      color: #64748b;
       font-size: 0.78rem;
       font-weight: 600;
       padding: 0.35rem 0.75rem;
@@ -870,11 +937,13 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       font-family: inherit;
     }
     .device-btn:hover {
-      color: #f1f5f9;
+      color: #0f172a;
     }
     .device-btn.active {
-      background: #1e293b;
-      color: #38bdf8;
+      background: #ffffff;
+      color: #4f46e5;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      font-weight: 700;
     }
     .preview-actions-group {
       display: flex;
@@ -882,41 +951,46 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       gap: 0.6rem;
     }
     .btn-dev-server {
-      background: rgba(16, 185, 129, 0.15);
+      background: rgba(16, 185, 129, 0.12);
       border: 1px solid rgba(16, 185, 129, 0.3);
-      color: #34d399;
+      color: #059669;
       font-size: 0.78rem;
-      font-weight: 600;
-      padding: 0.35rem 0.8rem;
-      border-radius: 6px;
+      font-weight: 700;
+      padding: 0.4rem 0.85rem;
+      border-radius: 8px;
       cursor: pointer;
       transition: all 0.15s ease;
       font-family: inherit;
+      box-shadow: 0 1px 3px rgba(16, 185, 129, 0.08);
     }
     .btn-dev-server:hover {
-      background: rgba(16, 185, 129, 0.25);
+      background: rgba(16, 185, 129, 0.22);
+      color: #047857;
+      transform: translateY(-1px);
     }
     .btn-preview-ext {
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      color: #38bdf8;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #4f46e5;
       text-decoration: none;
       font-size: 0.78rem;
-      font-weight: 600;
-      padding: 0.35rem 0.8rem;
-      border-radius: 6px;
+      font-weight: 700;
+      padding: 0.4rem 0.85rem;
+      border-radius: 8px;
       transition: all 0.15s ease;
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
+      box-shadow: 0 1px 3px rgba(99, 102, 241, 0.08);
     }
     .btn-preview-ext:hover {
-      background: rgba(56, 189, 248, 0.22);
+      background: rgba(99, 102, 241, 0.2);
+      transform: translateY(-1px);
     }
     .ui-preview-viewport {
       flex: 1;
       height: 100%;
-      background: #020617;
+      background: #e2e8f0;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -928,29 +1002,30 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       width: 100%;
       height: 100%;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       background: #e6ecf5;
-      transition: width 0.3s ease, border-radius 0.3s ease;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      transition: width 0.3s ease, border-radius 0.3s ease, box-shadow 0.3s ease;
     }
     .btn-preview-ui {
       background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
       color: #ffffff;
-      border: none;
-      padding: 0.7rem 1.4rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 0.85rem 1.6rem;
       border-radius: var(--radius-sm);
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      box-shadow: 0 4px 14px rgba(6, 182, 212, 0.35);
+      box-shadow: 0 10px 25px -4px rgba(6, 182, 212, 0.45);
       transition: all 0.2s ease;
       font-family: inherit;
     }
     .btn-preview-ui:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px -4px rgba(6, 182, 212, 0.6);
     }
   </style>
 </head>
@@ -958,15 +1033,15 @@ DASHBOARD_HTML = """<!DOCTYPE html>
   <header class="header">
     <div class="header-content">
       <div class="brand">
-        <span>🤖</span>
+        <span style="font-size: 1.4rem;">🤖</span>
         <span>AI Coding Team</span>
         <span class="badge"><span class="live-dot"></span> LangGraph Multi-Agent Engine</span>
       </div>
       <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-        <button onclick="openUiPreview()" class="docs-link" style="background: rgba(6, 182, 212, 0.18); border: 1px solid rgba(6, 182, 212, 0.4); color: #38bdf8; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 600;">
+        <button onclick="openUiPreview()" class="docs-link" style="background: rgba(238, 242, 255, 0.9); border: 1.5px solid rgba(99, 102, 241, 0.35); color: #4f46e5; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 700;">
           <span>🎨</span> <span>Live Website UI</span>
         </button>
-        <button onclick="openCodePreview()" class="docs-link" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem;">
+        <button onclick="openCodePreview()" class="docs-link" style="background: rgba(255, 255, 255, 0.85); border: 1.5px solid rgba(203, 213, 225, 0.85); cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; color: #334155; font-weight: 600;">
           <span>👁️</span> <span>Preview Code</span>
         </button>
         <a href="/docs" target="_blank" class="docs-link">Swagger API Docs ↗</a>
@@ -1004,11 +1079,11 @@ DASHBOARD_HTML = """<!DOCTYPE html>
           <div class="status-top-row">
             <div class="status-title-group">
               <div class="spinner" id="statusSpinner"></div>
-              <strong id="statusText" style="font-size: 0.95rem; color: #f1f5f9;">Initializing Multi-Agent Pipeline...</strong>
+              <strong id="statusText" style="font-size: 0.95rem; color: #0f172a;">Initializing Multi-Agent Pipeline...</strong>
             </div>
             <div class="status-meta">
               <span id="elapsedTimer">⏱️ 00:00s</span>
-              <span id="taskIdLabel" style="color: var(--cyan-glow);"></span>
+              <span id="taskIdLabel" style="color: var(--primary); font-weight: 700;"></span>
             </div>
           </div>
           <div class="progress-track">
@@ -1024,7 +1099,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
               <div class="agent-icon">📋</div>
               <div class="agent-info">
                 <span class="agent-name">Project Manager</span>
-                <span class="agent-detail" id="detail-pm">Requirements analysis & relational schema discovery</span>
+                <span class="agent-detail" id="detail-pm">Requirements analysis &amp; relational schema discovery</span>
               </div>
             </div>
             <span class="agent-state-pill" id="state-pm">Waiting...</span>
@@ -1036,7 +1111,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
               <div class="agent-icon">⚙️</div>
               <div class="agent-info">
                 <span class="agent-name">Backend Developer</span>
-                <span class="agent-detail" id="detail-backend">Express REST API, Mongoose models, JWT auth & seed data</span>
+                <span class="agent-detail" id="detail-backend">Express REST API, Mongoose models, JWT auth &amp; seed data</span>
               </div>
             </div>
             <span class="agent-state-pill" id="state-backend">Waiting...</span>
@@ -1048,7 +1123,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
               <div class="agent-icon">🎨</div>
               <div class="agent-info">
                 <span class="agent-name">Frontend Developer</span>
-                <span class="agent-detail" id="detail-frontend">React 18 + Vite pages, Tailwind UI, navigation & API client</span>
+                <span class="agent-detail" id="detail-frontend">React 18 + Vite pages, Tailwind UI, navigation &amp; API client</span>
               </div>
             </div>
             <span class="agent-state-pill" id="state-frontend">Waiting...</span>
@@ -1059,7 +1134,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
             <div class="agent-left">
               <div class="agent-icon">🧪</div>
               <div class="agent-info">
-                <span class="agent-name">QA Engineer (In-Memory MongoDB & Jest)</span>
+                <span class="agent-name">QA Engineer (In-Memory MongoDB &amp; Jest)</span>
                 <span class="agent-detail" id="detail-qa">Sandboxed test execution with auto-healing retry loop</span>
               </div>
             </div>
@@ -1072,7 +1147,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
               <div class="agent-icon">📝</div>
               <div class="agent-info">
                 <span class="agent-name">Documentation Writer</span>
-                <span class="agent-detail" id="detail-docs">README.md, OpenAPI endpoint specs & architectural overview</span>
+                <span class="agent-detail" id="detail-docs">README.md, OpenAPI endpoint specs &amp; architectural overview</span>
               </div>
             </div>
             <span class="agent-state-pill" id="state-docs">Waiting...</span>
@@ -1099,7 +1174,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
               <span class="dot dot-green"></span>
             </div>
             <span class="terminal-title">agent-orchestrator.log</span>
-            <span style="font-size: 0.72rem; color: #64748b; font-family: 'JetBrains Mono', monospace;">Live Stream</span>
+            <span style="font-size: 0.72rem; color: #94a3b8; font-family: 'JetBrains Mono', monospace;">Live Stream</span>
           </div>
           <div id="terminalBody" class="terminal-body">
             <div class="terminal-line"><span class="term-time">[SYSTEM]</span> Ready. Waiting to launch multi-agent build pipeline...</div>
@@ -1125,7 +1200,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
           <div class="run-guide">
             <div style="margin-bottom: 0.4rem;"><strong style="color: #34d399;">⚡ One-Click Run (Windows):</strong> Double-click <code style="color: #38bdf8;">start-dev.bat</code> inside the unzipped folder</div>
             <div style="margin-bottom: 0.4rem;"><strong style="color: #34d399;">⚡ One-Click Run (macOS/Linux):</strong> Run <code style="color: #38bdf8;">bash start-dev.sh</code></div>
-            <div style="margin-top: 0.5rem; color: #64748b;"><span># Or Manual Commands:</span></div>
+            <div style="margin-top: 0.5rem; color: #94a3b8;"><span># Or Manual Commands:</span></div>
             <div>cd backend &amp;&amp; npm install &amp;&amp; npm start <span># Express API on :3000</span></div>
             <div>cd ../frontend &amp;&amp; npm install &amp;&amp; npm run dev <span># React UI on :5173</span></div>
           </div>
@@ -1140,7 +1215,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       <div class="code-modal-header">
         <div class="code-modal-title">
           <span style="font-size: 1.25rem;">📁</span>
-          <span id="codeModalProjectName" style="font-weight: 800; color: #fff;">Project Code Explorer</span>
+          <span id="codeModalProjectName" style="font-weight: 800; color: #0f172a;">Project Code Explorer</span>
           <span id="activeFilePathBadge" class="file-path-badge">backend/server.js</span>
           <span id="fileLinesCount" class="file-lines-badge">0 lines</span>
         </div>
@@ -1218,62 +1293,32 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       return `⏱️ ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}s`;
     }
 
-    function escapeHtml(str) {
-      if (!str) return '';
-      return str.replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-    }
-
-    function getFileIcon(path) {
-      if (path.endsWith('.jsx')) return '⚛️';
-      if (path.endsWith('.js')) return '📜';
-      if (path.endsWith('.json')) return '📦';
-      if (path.endsWith('.css')) return '🎨';
-      if (path.endsWith('.md')) return '📝';
-      if (path.endsWith('.bat') || path.endsWith('.sh')) return '⚡';
-      if (path.endsWith('.html')) return '🌐';
-      return '📄';
-    }
-
     async function startBuild() {
       const prompt = document.getElementById('promptInput').value.trim();
-      if (!prompt) return alert('Please enter an application prompt.');
+      if (!prompt) {
+        alert('Please enter a description for the web application you want to build.');
+        return;
+      }
 
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span>Orchestrating AI Agents...</span> <div class="spinner"></div>';
+      submitBtn.innerHTML = '<div class="spinner" style="margin-right:8px;"></div> <span>Orchestrating Autonomous Agents...</span>';
 
-      // Reset and display UI sections
       document.getElementById('pipelineStatus').style.display = 'block';
       document.getElementById('resultCard').style.display = 'none';
-      document.getElementById('blueprintBox').style.display = 'none';
-      document.getElementById('progressFill').style.width = '5%';
-      document.getElementById('statusText').textContent = 'Launching LangGraph Multi-Agent Team...';
+      document.getElementById('progressFill').style.width = '3%';
+      document.getElementById('statusText').textContent = 'Initializing Multi-Agent Pipeline...';
+      document.getElementById('statusText').style.color = '#0f172a';
       document.getElementById('statusSpinner').style.display = 'inline-block';
-
-      // Reset all cards
-      ['pm', 'backend', 'frontend', 'qa', 'docs'].forEach(id => {
-        const card = document.getElementById('card-' + id);
-        const pill = document.getElementById('state-' + id);
-        card.className = 'agent-card';
-        pill.className = 'agent-state-pill';
-        pill.textContent = 'Waiting...';
-      });
-
-      // Reset terminal
-      const terminal = document.getElementById('terminalBody');
-      terminal.innerHTML = '<div class="terminal-line"><span class="term-time">[SYSTEM]</span> Initializing LangGraph state graph...</div>';
+      document.getElementById('terminalBody').innerHTML = '<div class="terminal-line"><span class="term-time">[SYSTEM]</span> Starting asynchronous build workflow...</div>';
       lastRenderedLogCount = 0;
 
       // Start elapsed timer
       startTime = Date.now();
       clearInterval(timerInterval);
       timerInterval = setInterval(() => {
-        const elapsedSecs = Math.floor((Date.now() - startTime) / 1000);
-        document.getElementById('elapsedTimer').textContent = formatTime(elapsedSecs);
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        document.getElementById('elapsedTimer').textContent = formatTime(elapsed);
       }, 1000);
 
       try {
@@ -1396,7 +1441,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
           clearInterval(timerInterval);
           document.getElementById('statusSpinner').style.display = 'none';
           document.getElementById('statusText').textContent = 'Build Complete! All Agents Finished.';
-          document.getElementById('statusText').style.color = '#34d399';
+          document.getElementById('statusText').style.color = '#059669';
           document.getElementById('progressFill').style.width = '100%';
 
           ['pm', 'backend', 'frontend', 'qa', 'docs'].forEach(id => {
@@ -1418,8 +1463,11 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
           const submitBtn = document.getElementById('submitBtn');
           submitBtn.disabled = false;
-          submitBtn.innerHTML = '<span>Generate Another Application</span> <span>🚀</span>';
-        } else if (task.status === 'failed') {
+          submitBtn.innerHTML = '<span>Orchestrate AI Team</span> <span>🚀</span>';
+        }
+
+        // 7. Handle Failure
+        if (task.status === 'failed') {
           clearInterval(pollInterval);
           clearInterval(timerInterval);
           document.getElementById('statusSpinner').style.display = 'none';
@@ -1427,24 +1475,23 @@ DASHBOARD_HTML = """<!DOCTYPE html>
           document.getElementById('statusText').style.color = '#ef4444';
           const submitBtn = document.getElementById('submitBtn');
           submitBtn.disabled = false;
-          submitBtn.innerHTML = '<span>Retry Generation</span> <span>🚀</span>';
+          submitBtn.innerHTML = '<span>Orchestrate AI Team</span> <span>🚀</span>';
         }
       } catch (err) {
-        console.error('Polling error:', err);
+        console.error('Poll error:', err);
       }
     }
 
-    // --- Interactive Code Explorer & Viewer Functions ---
     async function openCodePreview() {
       const modal = document.getElementById('codeModal');
       modal.style.display = 'flex';
 
-      const targetId = currentTaskId || 'latest';
-      document.getElementById('codeViewerContent').innerHTML = '<div style="color: #64748b; padding: 2rem; text-align: center;">Loading project files...</div>';
+      const tid = currentTaskId || 'latest';
+      document.getElementById('codeViewerContent').innerHTML = '<div style="padding: 2rem; color: #64748b;">Loading project files...</div>';
 
       try {
-        const res = await fetch('/build/files/' + targetId);
-        if (!res.ok) throw new Error('Files not available');
+        const res = await fetch('/build/files/' + tid);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         projectFiles = data.files || [];
         document.getElementById('codeModalProjectName').textContent = (data.app_name || 'Project') + ' Explorer';
@@ -1487,7 +1534,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
           item.className = 'file-item';
           item.setAttribute('data-path', f.path);
           const simpleName = f.path.split('/').pop();
-          item.innerHTML = `<span>${getFileIcon(f.path)}</span> <span style="font-weight: 500;">${simpleName}</span> <span style="font-size: 0.68rem; color: #475569; margin-left: auto;">${f.path}</span>`;
+          item.innerHTML = `<span>${getFileIcon(f.path)}</span> <span style="font-weight: 500;">${simpleName}</span> <span style="font-size: 0.68rem; color: #64748b; margin-left: auto;">${f.path}</span>`;
           item.onclick = () => selectFile(f.path);
           treeContainer.appendChild(item);
         });
@@ -1541,6 +1588,25 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         const path = el.getAttribute('data-path').toLowerCase();
         el.style.display = path.includes(q) ? 'flex' : 'none';
       });
+    }
+
+    function getFileIcon(path) {
+      if (path.endsWith('.js') || path.endsWith('.jsx')) return '📄';
+      if (path.endsWith('.json')) return '⚙️';
+      if (path.endsWith('.md')) return '📝';
+      if (path.endsWith('.css')) return '🎨';
+      if (path.endsWith('.env') || path.includes('.example')) return '🔒';
+      if (path.endsWith('.bat') || path.endsWith('.sh')) return '⚡';
+      return '📄';
+    }
+
+    function escapeHtml(str) {
+      return (str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
 
     let currentModalTab = 'code';
@@ -1602,19 +1668,19 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
       if (device === 'mobile') {
         iframe.style.width = '375px';
-        iframe.style.boxShadow = '0 20px 40px rgba(0,0,0,0.6)';
+        iframe.style.boxShadow = '0 20px 40px rgba(0,0,0,0.2)';
         iframe.style.border = '10px solid #1e293b';
         iframe.style.borderRadius = '32px';
       } else if (device === 'tablet') {
         iframe.style.width = '768px';
-        iframe.style.boxShadow = '0 20px 40px rgba(0,0,0,0.5)';
+        iframe.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
         iframe.style.border = '6px solid #1e293b';
         iframe.style.borderRadius = '16px';
       } else {
         iframe.style.width = '100%';
-        iframe.style.boxShadow = 'none';
+        iframe.style.boxShadow = '0 10px 30px rgba(0,0,0,0.08)';
         iframe.style.border = 'none';
-        iframe.style.borderRadius = '8px';
+        iframe.style.borderRadius = '12px';
       }
     }
 
