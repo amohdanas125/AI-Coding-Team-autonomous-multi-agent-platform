@@ -21,33 +21,34 @@ import json
 from groq_client import call_agent
 from schemas import FRONTEND_PAGE_OUTPUT_SCHEMA, FRONTEND_SKELETON_OUTPUT_SCHEMA
 
-PAGE_SYSTEM_PROMPT = """You are the Frontend Developer agent in a multi-agent system that builds modern, attractive CRUD web apps in React. You will be given ONE page from a larger app - its name, route, description, and primary_entity - plus the scoped api_contract (endpoints this page needs), reference_lookups for any picker fields, and whether the app requires auth. Generate the React component for THIS page only.
+PAGE_SYSTEM_PROMPT = """You are the Frontend Developer agent in a multi-agent system that builds modern, tactile CRUD web apps in React using a modern Neomorphism (Soft UI) design system. You will be given ONE page from a larger app - its name, route, description, and primary_entity - plus the scoped api_contract (endpoints this page needs), reference_lookups for any picker fields, and whether the app requires auth. Generate the React component for THIS page only.
 
 Tech stack - use exactly this:
 - A single functional component using hooks (useState, useEffect, useNavigate, useParams, Link)
 - Import the shared API helper as `import { apiFetch } from '../api'` - it already handles the base URL, the auth token, and 401 redirects. NEVER call fetch() directly - always go through apiFetch(path, options).
-- The shared CSS (src/index.css) already provides a complete, modern design system with ready-to-use classes. Use them to make the page visually engaging:
-  - Containers & Grids: .hero-banner, .search-wrapper, .search-input, .search-icon, .section-header, .section-title, .restaurant-grid, .restaurant-card, .card-cover, .card-body, .card-title, .card-address, .card-cta, .card-cuisine-badge
-  - Restaurant & Menu Details: .restaurant-header, .restaurant-info, .restaurant-meta, .cuisine-tag, .menu-grid, .menu-card, .menu-info, .menu-desc, .menu-footer, .menu-price
-  - Cart & Ordering Controls: .qty-control, .btn-qty, .qty-number, .btn-add, .cart-floating-bar, .cart-summary, .cart-count-badge, .cart-total, .btn-checkout
-  - Order History & Tracking: .order-card, .order-header, .order-id, .order-date, .status-badge (.pending, .confirmed, .delivered, .cancelled)
-  - Auth, Alerts & Empty States: .auth-container, .auth-card, .auth-tabs, .auth-tab, .demo-credentials-box, .alert, .alert-success, .alert-error, .empty-state, .empty-state-icon, .btn-secondary
+- The shared CSS (src/index.css) provides a complete tactile Neomorphism (Soft UI) design system with extruded dual-shadow cards and inset form controls. Use them to make the page visually stunning:
+  - Neomorphic Surfaces & Cards: .hero-banner, .stats-grid, .stat-card, .stat-icon, .stat-val, .stat-label, .grid-cards, .app-card, .card-cover, .card-body, .card-title, .card-meta, .card-footer, .card-badge, .neu-card
+  - Inset Controls & Search: .search-wrapper, .search-input, .search-icon, .form-group, .form-label, .form-input, .form-select, .form-textarea, .neu-input
+  - Neomorphic Buttons & Pills: .btn-primary, .btn-accent, .btn-secondary, .btn-danger, .neu-btn, .filter-pills, .filter-pill (.active), .badge (.badge-primary, .badge-success, .badge-warning, .badge-danger)
+  - Detail & Relational Views: .detail-header, .detail-title, .detail-meta, .items-grid, .item-card, .item-info, .item-desc, .item-footer, .item-price, .qty-control, .btn-qty, .qty-number
+  - Floating Drawers & Modals: .cart-floating-bar, .cart-summary, .cart-count-badge, .cart-total, .btn-checkout, .modal-overlay, .modal-box, .modal-header, .modal-title, .modal-close
+  - Auth, Alerts & Empty States: .auth-container, .auth-card, .auth-tabs, .auth-tab (.active), .demo-credentials-box, .alert, .alert-success, .alert-error, .empty-state, .empty-state-icon, .btn-secondary
 
 Page Implementation Patterns:
-1. Listing / Catalog Pages (e.g. RestaurantListPage):
-   - Render a hero banner at the top with a real-time search filter input (.search-input) that filters the list by name, cuisine, or address.
-   - Render items in a responsive grid (.restaurant-grid) of attractive cards (.restaurant-card) with an emoji icon for the category/cuisine, location/details, and a CTA link ("View Menu & Order →") to its detail route.
-2. Detail Pages (e.g. RestaurantDetailPage, route like /restaurants/:id):
-   - Fetch the parent entity details via its GET endpoint (e.g. /restaurants/:id).
-   - If related child items exist in api_contract (e.g. /menuitems), fetch them, filter for this parent's id (e.g. matching item.restaurant), and render them in a .menu-grid of .menu-card items.
-   - Each item displays its name, description, price ($XX.XX), and an interactive quantity selector (- / count / +) or Add to Order button.
-   - Maintain a cart state: when items are selected, display the floating bottom drawer (.cart-floating-bar) showing item count, total price, and "Confirm & Place Order →".
-   - On checkout: check localStorage.getItem('token'). If not logged in, prompt to log in and redirect to /login. If logged in, create the order (POST /orders and POST /orderitems), show a success banner, and clear the cart.
-3. Order History Pages (e.g. OrderPage):
-   - If not logged in (!localStorage.getItem('token')), show a card with a message and a button linking to /login.
-   - If logged in, fetch orders and render .order-card items with formatted timestamps, status badges (.status-badge), and a cancel button (DELETE /orders/:id).
+1. Listing / Dashboard Pages (e.g. Workouts, Books, Products, Tasks):
+   - At the top, always render 2-4 KPI Stat Cards (.stats-grid with .stat-card) summarizing key metrics (e.g., Total Records, Active / Completed Items, Streaks or Highlights) with an emoji icon (.stat-icon), numeric value (.stat-val), and label (.stat-label).
+   - Render a neomorphic hero section (.hero-banner) with a real-time search filter input (.search-input) that filters the list instantly by text.
+   - Optional category filter pills (.filter-pills > .filter-pill) to filter items by category or status.
+   - Render items in a responsive grid (.grid-cards) of tactile cards (.app-card) with an emoji banner (.card-cover), title (.card-title), metadata (.card-meta), category badge (.card-badge), and a CTA button or Link to its detail route.
+2. Detail & Relational Pages (e.g. WorkoutDetail, BookDetail, OrderDetail, route like /:entity/:id):
+   - Fetch the parent record via GET /:entity/:id.
+   - If related child records exist in api_contract (e.g. exercises for a workout, items for an order, reviews for a book), fetch them, filter for this parent's id, and render them in a tactile .items-grid of .item-card components.
+   - Include interactive actions: e.g. quantity selectors, status updates, or a "Add Item" button that opens an embossed modal or form.
+3. Creation / Management & Forms:
+   - Use soft inset inputs (.form-input, .form-select) with clear labels (.form-label).
+   - If any field is a reference to another entity (found in reference_lookups), fetch the options from its list_endpoint and render a dropdown <select className="form-select"> so users choose real records rather than typing IDs.
 4. Login / Register Pages (e.g. LoginPage):
-   - Render .auth-container and .auth-card with tabs for Sign In vs Create Account.
+   - Render .auth-container and .auth-card with segmented neomorphic tabs for Sign In vs Create Account.
    - Include a "One-Click Fill Demo Credentials" button that fills 'alice@example.com' / 'Password123!' for instant testing.
    - On login, save data.token to localStorage.setItem('token', data.token) and navigate to '/'.
 
@@ -99,6 +100,9 @@ def _build_index_html(app_name: str) -> str:
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{app_name}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="root"></div>
@@ -126,32 +130,48 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 
 
 def _build_index_css() -> str:
-    """Deterministic modern design system stylesheet - NOT an LLM call.
+    """Deterministic tactile Neomorphism (Soft UI) design system stylesheet - NOT an LLM call.
     Rule #1 of project architecture: Anything a program can compute, compute
     in Python rather than asking an LLM. Guarantees that every generated
     frontend immediately looks attractive and responsive with zero token burn."""
-    return """/* Modern, Attractive Food Delivery Design System */
+    return """/* ========================================================
+   TACTILE NEOMORPHISM (SOFT UI) DESIGN SYSTEM
+   Autonomous Multi-Agent Generated Frontend Engine
+   ======================================================== */
 :root {
-  --primary: #ea580c;
-  --primary-hover: #c2410c;
-  --primary-light: #fff7ed;
-  --primary-border: #fed7aa;
-  --secondary: #0f172a;
-  --bg: #f8fafc;
-  --surface: #ffffff;
-  --surface-muted: #f1f5f9;
-  --text: #0f172a;
+  /* Canvas & Soft Surfaces */
+  --bg: #e6ecf5;
+  --bg-subtle: #edf2f9;
+  --surface: #e6ecf5;
+  --surface-raised: #e9eff8;
+  --text: #1e293b;
   --text-muted: #64748b;
   --text-light: #94a3b8;
-  --border: #e2e8f0;
-  --radius-sm: 6px;
-  --radius: 12px;
-  --radius-lg: 16px;
+
+  /* Primary Accent & Vibrancy */
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-light: #e0e7ff;
+  --primary-glow: rgba(79, 70, 229, 0.3);
+  --accent-cyan: #06b6d4;
+  --accent-emerald: #10b981;
+  --accent-rose: #f43f5e;
+  --accent-amber: #f59e0b;
+
+  /* Dual Neomorphic Shadows */
+  --neu-flat: 8px 8px 18px #c2c8d4, -8px -8px 18px #ffffff;
+  --neu-flat-sm: 4px 4px 10px #c2c8d4, -4px -4px 10px #ffffff;
+  --neu-flat-lg: 14px 14px 28px #bcc3cf, -14px -14px 28px #ffffff;
+  --neu-inset: inset 4px 4px 8px #c2c8d4, inset -4px -4px 8px #ffffff;
+  --neu-inset-sm: inset 2px 2px 5px #c2c8d4, inset -2px -2px 5px #ffffff;
+  --neu-hover: 12px 12px 24px #bcc3cf, -12px -12px 24px #ffffff;
+  --neu-pressed: inset 5px 5px 10px #c2c8d4, inset -5px -5px 10px #ffffff;
+
+  /* Border Radii */
+  --radius-sm: 10px;
+  --radius: 18px;
+  --radius-lg: 26px;
   --radius-full: 9999px;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
-  --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
-  --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
 
 * {
@@ -160,10 +180,10 @@ def _build_index_css() -> str:
 
 body {
   margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background-color: var(--bg);
   color: var(--text);
-  line-height: 1.5;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -173,234 +193,369 @@ body {
   flex-direction: column;
 }
 
+/* --- Sticky Neomorphic Navbar --- */
 .navbar {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--border);
+  background: rgba(230, 236, 245, 0.94);
+  backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 20px rgba(194, 200, 212, 0.55);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.7);
 }
 
 .nav-container {
-  max-width: 1140px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 0.85rem 1.5rem;
+  padding: 0.9rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
 .brand-logo {
-  font-size: 1.45rem;
+  font-size: 1.35rem;
   font-weight: 800;
   color: var(--primary);
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
   letter-spacing: -0.02em;
+  background: var(--bg);
+  padding: 0.35rem 0.9rem;
+  border-radius: var(--radius-full);
+  box-shadow: var(--neu-flat-sm);
+  transition: all 0.2s ease;
 }
 
 .brand-logo:hover {
+  box-shadow: var(--neu-hover);
   color: var(--primary-hover);
-  text-decoration: none;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .nav-links a {
   color: var(--text-muted);
   text-decoration: none;
   font-weight: 600;
-  font-size: 0.95rem;
-  padding: 0.4rem 0.6rem;
-  border-radius: var(--radius-sm);
-  transition: all 0.15s ease;
+  font-size: 0.92rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  transition: all 0.2s ease;
 }
 
-.nav-links a:hover,
+.nav-links a:hover {
+  color: var(--primary);
+  box-shadow: var(--neu-flat-sm);
+}
+
 .nav-links a.active {
   color: var(--primary);
-  background: var(--primary-light);
+  box-shadow: var(--neu-inset-sm);
+  font-weight: 700;
 }
 
 .btn-nav {
-  background: var(--primary);
-  color: #fff !important;
-  padding: 0.5rem 1.25rem !important;
+  background: var(--bg);
+  color: var(--primary) !important;
+  padding: 0.55rem 1.35rem !important;
   border-radius: var(--radius-full) !important;
   font-size: 0.9rem !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   border: none;
   cursor: pointer;
   text-decoration: none;
-  box-shadow: 0 2px 4px rgba(234, 88, 12, 0.2);
-  transition: all 0.15s ease;
+  box-shadow: var(--neu-flat-sm);
+  transition: all 0.2s ease;
 }
 
 .btn-nav:hover {
-  background: var(--primary-hover) !important;
-  box-shadow: 0 4px 8px rgba(234, 88, 12, 0.3);
+  box-shadow: var(--neu-hover);
   transform: translateY(-1px);
 }
 
+.btn-nav:active {
+  box-shadow: var(--neu-pressed);
+}
+
+/* --- Main Layout Container --- */
 .main-content {
-  max-width: 1140px;
+  max-width: 1180px;
   width: 100%;
   margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
+  padding: 2.25rem 1.5rem 5rem;
   flex: 1;
 }
 
+/* --- Neomorphic Hero Section --- */
 .hero-banner {
-  background: linear-gradient(135deg, #ea580c 0%, #f97316 60%, #fb923c 100%);
-  color: white;
-  padding: 3rem 2rem;
+  background: var(--bg);
   border-radius: var(--radius-lg);
+  padding: 3rem 2rem;
   margin-bottom: 2.5rem;
+  box-shadow: var(--neu-flat-lg);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   text-align: center;
-  box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
 }
 
 .hero-banner h1 {
-  font-size: 2.5rem;
+  font-size: 2.6rem;
   font-weight: 800;
-  margin: 0 0 0.75rem 0;
-  color: white;
-  border: none;
-  padding: 0;
-  letter-spacing: -0.02em;
+  margin: 0 0 0.85rem 0;
+  color: var(--text);
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #1e293b 0%, #4338ca 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .hero-banner p {
   font-size: 1.15rem;
-  opacity: 0.95;
-  max-width: 600px;
-  margin: 0 auto 1.5rem;
+  color: var(--text-muted);
+  max-width: 620px;
+  margin: 0 auto 1.75rem;
+  line-height: 1.6;
 }
 
+/* --- Inset Search Control --- */
 .search-wrapper {
-  max-width: 480px;
+  max-width: 500px;
   margin: 0 auto;
   position: relative;
 }
 
 .search-input {
   width: 100%;
-  padding: 0.85rem 1.25rem 0.85rem 2.85rem;
+  padding: 1rem 1.25rem 1rem 3.1rem;
   font-size: 1rem;
+  font-family: inherit;
   border-radius: var(--radius-full);
   border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: var(--bg);
+  box-shadow: var(--neu-inset);
+  color: var(--text);
   outline: none;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  box-shadow: var(--neu-inset), 0 0 0 2px var(--primary-glow);
 }
 
 .search-icon {
   position: absolute;
-  left: 1rem;
+  left: 1.15rem;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: var(--text-light);
+  pointer-events: none;
 }
 
+/* --- KPI / Summary Stats Grid --- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.stat-card {
+  background: var(--bg);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--neu-flat);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  transition: all 0.25s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--neu-hover);
+}
+
+.stat-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow: var(--neu-flat-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.stat-val {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.stat-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.35rem;
+}
+
+/* --- Category Filter Pills --- */
+.filter-pills {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+  align-items: center;
+}
+
+.filter-pill {
+  background: var(--bg);
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 0.55rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--text-muted);
+  box-shadow: var(--neu-flat-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-pill:hover {
+  color: var(--primary);
+  box-shadow: var(--neu-hover);
+}
+
+.filter-pill.active {
+  box-shadow: var(--neu-pressed);
+  color: var(--primary);
+  font-weight: 800;
+}
+
+/* --- Section Headers --- */
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
 .section-title {
-  font-size: 1.65rem;
-  font-weight: 700;
-  color: var(--secondary);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text);
   margin: 0;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
+  letter-spacing: -0.02em;
 }
 
-.restaurant-grid {
+/* --- Neomorphic Card Grids (Universal & Food Aliases) --- */
+.grid-cards,
+.restaurant-grid,
+.menu-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.75rem;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
 }
 
-.restaurant-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
+.app-card,
+.restaurant-card,
+.menu-card,
+.neu-card {
+  background: var(--bg);
+  border: 1px solid rgba(255, 255, 255, 0.65);
   border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 1.5rem;
+  box-shadow: var(--neu-flat);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
   text-decoration: none;
   color: inherit;
+  position: relative;
+  overflow: hidden;
 }
 
-.restaurant-card:hover {
+.app-card:hover,
+.restaurant-card:hover,
+.menu-card:hover,
+.neu-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary-border);
+  box-shadow: var(--neu-hover);
   text-decoration: none;
 }
 
 .card-cover {
-  height: 140px;
-  background: linear-gradient(135deg, #fef3c7, #fed7aa);
+  height: 130px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--neu-inset-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 3.5rem;
   position: relative;
+  margin-bottom: 1.25rem;
 }
 
+.card-badge,
 .card-cuisine-badge {
   position: absolute;
   bottom: 0.75rem;
   right: 0.75rem;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg);
   color: var(--primary);
-  font-weight: 700;
+  font-weight: 800;
   font-size: 0.75rem;
-  padding: 0.25rem 0.65rem;
+  padding: 0.3rem 0.75rem;
   border-radius: var(--radius-full);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--neu-flat-sm);
 }
 
 .card-body {
-  padding: 1.25rem;
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
 .card-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--secondary);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text);
   margin: 0 0 0.5rem 0;
+  letter-spacing: -0.01em;
 }
 
+.card-meta,
 .card-address {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  margin-bottom: 1rem;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
   flex: 1;
 }
 
@@ -408,20 +563,217 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 0.85rem;
-  border-top: 1px solid var(--border);
-  font-weight: 600;
-  font-size: 0.9rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(194, 200, 212, 0.35);
+  font-weight: 700;
+  font-size: 0.92rem;
   color: var(--primary);
 }
 
+/* --- Neomorphic Buttons --- */
+.neu-btn,
+.btn-primary,
+.btn-checkout,
+.btn-add {
+  background: var(--bg);
+  color: var(--primary);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.95rem;
+  font-family: inherit;
+  padding: 0.75rem 1.5rem;
+  box-shadow: var(--neu-flat-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.neu-btn:hover,
+.btn-primary:hover,
+.btn-checkout:hover,
+.btn-add:hover {
+  color: var(--primary-hover);
+  box-shadow: var(--neu-hover);
+  transform: translateY(-1px);
+}
+
+.neu-btn:active,
+.btn-primary:active,
+.btn-checkout:active,
+.btn-add:active {
+  box-shadow: var(--neu-pressed);
+  transform: scale(0.98);
+}
+
+.btn-accent {
+  background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+  color: #ffffff !important;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.95rem;
+  font-family: inherit;
+  padding: 0.75rem 1.6rem;
+  box-shadow: 6px 6px 14px rgba(79, 70, 229, 0.35), -6px -6px 14px #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-accent:hover {
+  box-shadow: 8px 8px 18px rgba(79, 70, 229, 0.5), -8px -8px 18px #ffffff;
+  transform: translateY(-2px);
+}
+
+.btn-accent:active {
+  box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  background: var(--bg);
+  color: var(--text-muted);
+  border: none;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 0.65rem 1.35rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  box-shadow: var(--neu-flat-sm);
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  color: var(--text);
+  box-shadow: var(--neu-hover);
+}
+
+.btn-secondary:active {
+  box-shadow: var(--neu-pressed);
+}
+
+.btn-danger {
+  background: var(--bg);
+  color: var(--accent-rose);
+  border: none;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 0.65rem 1.35rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  box-shadow: var(--neu-flat-sm);
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  box-shadow: var(--neu-hover);
+}
+
+.btn-danger:active {
+  box-shadow: var(--neu-pressed);
+}
+
+/* --- Inset Form Controls --- */
+.form-group {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.form-input,
+.form-select,
+.form-textarea,
+.neu-input {
+  width: 100%;
+  padding: 0.85rem 1.15rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--bg);
+  box-shadow: var(--neu-inset);
+  color: var(--text);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus,
+.neu-input:focus {
+  box-shadow: var(--neu-inset), 0 0 0 2px var(--primary-glow);
+}
+
+/* --- Stepper Controls (Quantity / Counters) --- */
+.qty-control {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.btn-qty {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--primary);
+  border: none;
+  font-size: 1.2rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: var(--neu-flat-sm);
+  transition: all 0.15s ease;
+}
+
+.btn-qty:hover {
+  box-shadow: var(--neu-hover);
+  color: var(--primary-hover);
+}
+
+.btn-qty:active {
+  box-shadow: var(--neu-pressed);
+}
+
+.qty-number {
+  font-weight: 800;
+  font-size: 1.1rem;
+  min-width: 28px;
+  text-align: center;
+}
+
+/* --- Detail & Relational Views --- */
+.detail-header,
 .restaurant-header {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--bg);
   border-radius: var(--radius);
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: var(--shadow);
+  padding: 2.25rem;
+  margin-bottom: 2.5rem;
+  box-shadow: var(--neu-flat);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -429,158 +781,109 @@ body {
   gap: 1.5rem;
 }
 
+.detail-title,
 .restaurant-info h1 {
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 800;
   margin: 0 0 0.5rem 0;
-  color: var(--secondary);
-  border: none;
-  padding: 0;
+  color: var(--text);
+  letter-spacing: -0.02em;
 }
 
+.detail-meta,
 .restaurant-meta {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
   color: var(--text-muted);
   font-size: 0.95rem;
 }
 
 .cuisine-tag {
-  background: var(--primary-light);
+  background: var(--bg);
   color: var(--primary);
-  font-weight: 700;
+  font-weight: 800;
   font-size: 0.8rem;
-  padding: 0.25rem 0.75rem;
+  padding: 0.35rem 0.85rem;
   border-radius: var(--radius-full);
   text-transform: uppercase;
+  box-shadow: var(--neu-flat-sm);
 }
 
-.menu-grid {
+.items-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.5rem;
+  gap: 1.75rem;
   margin-bottom: 3rem;
 }
 
-.menu-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
+.item-card {
+  background: var(--bg);
   border-radius: var(--radius);
-  padding: 1.25rem;
-  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+  box-shadow: var(--neu-flat);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   transition: all 0.2s ease;
 }
 
-.menu-card:hover {
-  box-shadow: var(--shadow-md);
-  border-color: var(--primary-border);
+.item-card:hover {
+  box-shadow: var(--neu-hover);
 }
 
+.item-info h3,
 .menu-info h3 {
-  margin: 0 0 0.4rem 0;
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--secondary);
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text);
 }
 
+.item-desc,
 .menu-desc {
   color: var(--text-muted);
-  font-size: 0.875rem;
-  margin: 0 0 1rem 0;
-  min-height: 2.6rem;
+  font-size: 0.9rem;
+  margin: 0 0 1.25rem 0;
+  min-height: 2.7rem;
 }
 
+.item-footer,
 .menu-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  border-top: 1px solid rgba(194, 200, 212, 0.4);
 }
 
+.item-price,
 .menu-price {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 800;
-  color: var(--secondary);
+  color: var(--primary);
 }
 
-.qty-control {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.btn-qty {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-full);
-  background: var(--surface-muted);
-  color: var(--secondary);
-  border: 1px solid var(--border);
-  font-size: 1.1rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.15s ease;
-}
-
-.btn-qty:hover {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
-}
-
-.qty-number {
-  font-weight: 700;
-  font-size: 1rem;
-  min-width: 24px;
-  text-align: center;
-}
-
-.btn-add {
-  background: var(--primary);
-  color: white;
-  font-weight: 600;
-  font-size: 0.875rem;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-full);
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  transition: all 0.15s ease;
-}
-
-.btn-add:hover {
-  background: var(--primary-hover);
-  transform: scale(1.02);
-}
-
+/* --- Floating Bar Drawer --- */
 .cart-floating-bar {
   position: fixed;
-  bottom: 1.5rem;
+  bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--secondary);
-  color: white;
-  padding: 1rem 1.75rem;
+  background: var(--bg);
+  color: var(--text);
+  padding: 1rem 2rem;
   border-radius: var(--radius-full);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--neu-flat-lg);
+  border: 1px solid rgba(255, 255, 255, 0.8);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
   z-index: 99;
   width: 90%;
-  max-width: 600px;
+  max-width: 620px;
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -599,113 +902,77 @@ body {
   background: var(--primary);
   color: white;
   font-weight: 800;
-  padding: 0.2rem 0.6rem;
+  padding: 0.25rem 0.75rem;
   border-radius: var(--radius-full);
   font-size: 0.85rem;
 }
 
 .cart-total {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 800;
+  color: var(--text);
 }
 
-.btn-checkout {
-  background: var(--primary);
-  color: white;
-  font-weight: 700;
-  font-size: 0.95rem;
-  padding: 0.65rem 1.5rem;
-  border-radius: var(--radius-full);
-  border: none;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-checkout:hover {
-  background: #f97316;
-  transform: scale(1.03);
-}
-
-.order-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  box-shadow: var(--shadow-sm);
-}
-
-.order-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.order-id {
-  font-weight: 800;
-  font-size: 1.1rem;
-  color: var(--secondary);
-}
-
-.order-date {
-  color: var(--text-muted);
-  font-size: 0.875rem;
-}
-
+/* --- Neomorphic Badges --- */
+.badge,
 .status-badge {
-  display: inline-block;
-  padding: 0.3rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.85rem;
   border-radius: var(--radius-full);
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  background: var(--bg);
+  box-shadow: var(--neu-flat-sm);
 }
 
-.status-badge.pending,
-.status-badge.placed {
-  background: #fef3c7;
-  color: #b45309;
-}
-
+.badge-primary,
 .status-badge.confirmed,
-.status-badge.shipped,
-.status-badge.preparing {
-  background: #e0f2fe;
-  color: #0369a1;
+.status-badge.shipped {
+  color: var(--primary);
 }
 
+.badge-success,
 .status-badge.delivered,
 .status-badge.completed {
-  background: #dcfce7;
-  color: #15803d;
+  color: #059669;
 }
 
+.badge-warning,
+.status-badge.pending,
+.status-badge.placed {
+  color: #d97706;
+}
+
+.badge-danger,
 .status-badge.cancelled {
-  background: #fee2e2;
-  color: #b91c1c;
+  color: #dc2626;
 }
 
+/* --- Authentication Card --- */
 .auth-container {
-  max-width: 440px;
-  margin: 2rem auto;
+  max-width: 460px;
+  margin: 3rem auto;
 }
 
 .auth-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 2.25rem;
-  box-shadow: var(--shadow-md);
+  background: var(--bg);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--neu-flat-lg);
+  border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
 .auth-tabs {
   display: flex;
-  border-bottom: 2px solid var(--border);
-  margin-bottom: 1.75rem;
+  background: var(--bg);
+  box-shadow: var(--neu-inset);
+  border-radius: var(--radius-full);
+  padding: 5px;
+  margin-bottom: 2rem;
 }
 
 .auth-tab {
@@ -713,94 +980,87 @@ body {
   text-align: center;
   padding: 0.75rem 0;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  font-family: inherit;
   color: var(--text-muted);
   border: none;
   background: none;
+  border-radius: var(--radius-full);
   cursor: pointer;
-  border-bottom: 3px solid transparent;
-  margin-bottom: -2px;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .auth-tab.active {
+  background: var(--bg);
+  box-shadow: var(--neu-flat-sm);
   color: var(--primary);
-  border-bottom-color: var(--primary);
+  font-weight: 800;
 }
 
 .demo-credentials-box {
-  background: var(--primary-light);
-  border: 1px dashed var(--primary-border);
+  background: var(--bg);
+  box-shadow: var(--neu-inset-sm);
   border-radius: var(--radius-sm);
-  padding: 0.85rem 1rem;
+  padding: 1.1rem;
   margin-bottom: 1.5rem;
   font-size: 0.875rem;
+  color: var(--text-muted);
 }
 
 .demo-credentials-box button {
-  background: var(--primary);
-  color: white;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 0.35rem 0.75rem;
-  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--primary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-full);
   border: none;
   cursor: pointer;
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
+  box-shadow: var(--neu-flat-sm);
+  transition: all 0.2s ease;
 }
 
+.demo-credentials-box button:hover {
+  box-shadow: var(--neu-hover);
+}
+
+.demo-credentials-box button:active {
+  box-shadow: var(--neu-pressed);
+}
+
+/* --- Alerts & Empty States --- */
 .alert {
-  padding: 0.85rem 1.25rem;
+  padding: 1rem 1.25rem;
   border-radius: var(--radius-sm);
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin-bottom: 1.25rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  background: var(--bg);
+  box-shadow: var(--neu-inset-sm);
 }
 
 .alert-success {
-  background: #dcfce7;
-  color: #166534;
-  border: 1px solid #bbf7d0;
+  color: #059669;
 }
 
 .alert-error {
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
+  color: #dc2626;
 }
 
 .empty-state {
   text-align: center;
-  padding: 3rem 1.5rem;
-  background: var(--surface);
-  border: 1px dashed var(--border);
+  padding: 3.5rem 1.5rem;
+  background: var(--bg);
   border-radius: var(--radius);
+  box-shadow: var(--neu-inset);
   color: var(--text-muted);
 }
 
 .empty-state-icon {
-  font-size: 3rem;
+  font-size: 3.2rem;
   margin-bottom: 1rem;
-}
-
-.btn-secondary {
-  background: var(--surface-muted);
-  color: var(--secondary);
-  border: 1px solid var(--border);
-  font-weight: 600;
-  padding: 0.55rem 1.15rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  transition: all 0.15s ease;
-}
-
-.btn-secondary:hover {
-  background: var(--border);
-  text-decoration: none;
 }
 """
 
