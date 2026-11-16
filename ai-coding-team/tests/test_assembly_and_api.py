@@ -208,3 +208,15 @@ def test_api_async_build_and_status(monkeypatch):
     assert "progress_percent" in task_data
     assert task_data["status"] in ("pending", "in_progress", "done")
 
+
+def test_api_build_files_endpoint():
+    res = client.get("/build/files/fittrack")
+    assert res.status_code == 200
+    data = res.json()
+    assert "files" in data
+    assert len(data["files"]) > 0
+    paths = [f["path"] for f in data["files"]]
+    assert any("server.js" in p for p in paths)
+    assert any("package.json" in p for p in paths)
+
+

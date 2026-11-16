@@ -572,6 +572,216 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       transform: translateY(-2px);
       box-shadow: 0 14px 25px -5px rgba(16, 185, 129, 0.6);
     }
+    .btn-preview {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      padding: 0.95rem 2rem;
+      border-radius: var(--radius-sm);
+      font-size: 1.05rem;
+      box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.45);
+      transition: all 0.2s;
+    }
+    .btn-preview:hover {
+      background: linear-gradient(135deg, #4338ca 0%, #1d4ed8 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 25px -5px rgba(79, 70, 229, 0.65);
+    }
+
+    /* Modal Overlay & IDE Container */
+    .code-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.88);
+      backdrop-filter: blur(12px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .code-modal-container {
+      width: 95vw;
+      max-width: 1320px;
+      height: 86vh;
+      background: #090e17;
+      border: 1px solid #1e293b;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(59, 130, 246, 0.15);
+      animation: modalZoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes modalZoomIn {
+      from { transform: scale(0.96); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .code-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1.25rem;
+      background: #0c121e;
+      border-bottom: 1px solid #1e293b;
+    }
+    .code-modal-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+    }
+    .file-path-badge {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      padding: 0.2rem 0.65rem;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+    }
+    .file-lines-badge {
+      color: #64748b;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+    }
+    .btn-copy {
+      background: #1e293b;
+      color: #94a3b8;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 0.45rem 0.85rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s;
+    }
+    .btn-copy:hover {
+      background: #334155;
+      color: #fff;
+    }
+    .btn-close-modal {
+      background: transparent;
+      color: #94a3b8;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+    .btn-close-modal:hover {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+    }
+    .code-modal-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    .code-sidebar {
+      width: 320px;
+      background: #060a12;
+      border-right: 1px solid #1e293b;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .sidebar-search-box {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #1e293b;
+      background: #090e17;
+    }
+    .sidebar-search-box input {
+      width: 100%;
+      background: #030712;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 0.45rem 0.75rem;
+      color: #f1f5f9;
+      font-size: 0.8rem;
+      font-family: inherit;
+      outline: none;
+    }
+    .sidebar-search-box input:focus {
+      border-color: #3b82f6;
+    }
+    .file-tree {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.5rem 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+    .file-category-title {
+      padding: 0.65rem 1rem 0.35rem;
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .file-item {
+      padding: 0.4rem 1rem 0.4rem 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      color: #94a3b8;
+      transition: all 0.15s ease;
+      border-left: 2px solid transparent;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .file-item:hover {
+      background: rgba(30, 41, 59, 0.4);
+      color: #f8fafc;
+    }
+    .file-item.active {
+      background: rgba(59, 130, 246, 0.14);
+      color: #60a5fa;
+      border-left-color: #3b82f6;
+      font-weight: 600;
+    }
+    .code-viewer-pane {
+      flex: 1;
+      background: #030712;
+      overflow: auto;
+      padding: 1.25rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.84rem;
+      line-height: 1.65;
+      color: #e2e8f0;
+    }
+    .code-line {
+      display: flex;
+      white-space: pre;
+    }
+    .line-num {
+      width: 44px;
+      color: #475569;
+      text-align: right;
+      padding-right: 1.25rem;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .line-code {
+      flex: 1;
+      tab-size: 2;
+    }
     .run-guide {
       margin-top: 1.25rem;
       background: #030712;
@@ -734,7 +944,14 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         <div id="resultCard" class="result-card">
           <h3 id="resultTitle">🎉 Application Assembled Successfully!</h3>
           <p id="resultDesc">All 5 agents verified the application code. Production package is ready.</p>
-          <a id="downloadBtn" href="#" class="btn-download">⬇️ Download Ready-to-Run (.ZIP)</a>
+          <div style="display: flex; gap: 0.85rem; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 1.25rem;">
+            <button id="previewBtn" class="btn-preview" onclick="openCodePreview()">
+              <span>👁️</span> <span>Preview Code &amp; Files</span>
+            </button>
+            <a id="downloadBtn" href="#" class="btn-download">
+              <span>⬇️</span> <span>Download Ready-to-Run (.ZIP)</span>
+            </a>
+          </div>
           
           <div class="run-guide">
             <div style="margin-bottom: 0.4rem;"><strong style="color: #34d399;">⚡ One-Click Run (Windows):</strong> Double-click <code style="color: #38bdf8;">start-dev.bat</code> inside the unzipped folder</div>
@@ -748,6 +965,39 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     </div>
   </main>
 
+  <!-- Interactive Code Explorer Modal -->
+  <div id="codeModal" class="code-modal-overlay" style="display: none;">
+    <div class="code-modal-container">
+      <div class="code-modal-header">
+        <div class="code-modal-title">
+          <span style="font-size: 1.25rem;">📁</span>
+          <span id="codeModalProjectName" style="font-weight: 800; color: #fff;">Project Code Explorer</span>
+          <span id="activeFilePathBadge" class="file-path-badge">backend/server.js</span>
+          <span id="fileLinesCount" class="file-lines-badge">0 lines</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <button id="copyCodeBtn" class="btn-copy" onclick="copyActiveCode()">
+            <span>📋</span> <span id="copyBtnText">Copy Code</span>
+          </button>
+          <button class="btn-close-modal" onclick="closeCodePreview()" title="Close (Esc)">✕</button>
+        </div>
+      </div>
+      <div class="code-modal-body">
+        <div class="code-sidebar">
+          <div class="sidebar-search-box">
+            <input type="text" id="fileSearchInput" placeholder="🔍 Filter files..." oninput="filterFiles(this.value)" />
+          </div>
+          <div id="fileTreeContainer" class="file-tree">
+            <!-- Files populated dynamically -->
+          </div>
+        </div>
+        <div class="code-viewer-pane">
+          <div id="codeViewerContent">Select a file from the explorer on the left...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     function setPrompt(text) {
       document.getElementById('promptInput').value = text;
@@ -757,11 +1007,34 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     let timerInterval = null;
     let startTime = null;
     let lastRenderedLogCount = 0;
+    let currentTaskId = null;
+    let projectFiles = [];
+    let activeFileContent = '';
 
     function formatTime(seconds) {
       const mins = Math.floor(seconds / 60);
       const secs = seconds % 60;
       return `⏱️ ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}s`;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+    }
+
+    function getFileIcon(path) {
+      if (path.endsWith('.jsx')) return '⚛️';
+      if (path.endsWith('.js')) return '📜';
+      if (path.endsWith('.json')) return '📦';
+      if (path.endsWith('.css')) return '🎨';
+      if (path.endsWith('.md')) return '📝';
+      if (path.endsWith('.bat') || path.endsWith('.sh')) return '⚡';
+      if (path.endsWith('.html')) return '🌐';
+      return '📄';
     }
 
     async function startBuild() {
@@ -810,6 +1083,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         });
         const data = await res.json();
         const taskId = data.task_id;
+        currentTaskId = taskId;
         document.getElementById('taskIdLabel').textContent = 'Task: ' + taskId.slice(0, 8);
 
         clearInterval(pollInterval);
@@ -825,6 +1099,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
     async function checkStatus(taskId) {
       try {
+        currentTaskId = taskId;
         const res = await fetch('/build/status/' + taskId);
         const task = await res.json();
 
@@ -957,6 +1232,120 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         console.error('Polling error:', err);
       }
     }
+
+    // --- Interactive Code Explorer & Viewer Functions ---
+    async function openCodePreview() {
+      const modal = document.getElementById('codeModal');
+      modal.style.display = 'flex';
+
+      const targetId = currentTaskId || 'latest';
+      document.getElementById('codeViewerContent').innerHTML = '<div style="color: #64748b; padding: 2rem; text-align: center;">Loading project files...</div>';
+
+      try {
+        const res = await fetch('/build/files/' + targetId);
+        if (!res.ok) throw new Error('Files not available');
+        const data = await res.json();
+        projectFiles = data.files || [];
+        document.getElementById('codeModalProjectName').textContent = (data.app_name || 'Project') + ' Explorer';
+        renderFileTree(projectFiles);
+
+        // Select the primary entry file by default
+        const defaultFile = projectFiles.find(f => f.path.includes('server.js') || f.path.includes('App.jsx') || f.path.includes('README.md')) || projectFiles[0];
+        if (defaultFile) {
+          selectFile(defaultFile.path);
+        }
+      } catch (err) {
+        document.getElementById('codeViewerContent').innerHTML = `<div style="color: #ef4444; padding: 2rem;">Failed to load project files: ${err.message}</div>`;
+      }
+    }
+
+    function closeCodePreview() {
+      document.getElementById('codeModal').style.display = 'none';
+    }
+
+    function renderFileTree(files) {
+      const treeContainer = document.getElementById('fileTreeContainer');
+      treeContainer.innerHTML = '';
+
+      const groups = {
+        '⚙️ Backend (Express + Models)': files.filter(f => f.path.startsWith('backend/') && !f.path.includes('tests/')),
+        '🎨 Frontend (React + Vite)': files.filter(f => f.path.startsWith('frontend/')),
+        '🧪 Automated Tests (Jest)': files.filter(f => f.path.includes('tests/')),
+        '📝 Documentation & Scripts': files.filter(f => !f.path.startsWith('backend/') && !f.path.startsWith('frontend/'))
+      };
+
+      Object.entries(groups).forEach(([groupName, groupFiles]) => {
+        if (groupFiles.length === 0) return;
+        const catHeader = document.createElement('div');
+        catHeader.className = 'file-category-title';
+        catHeader.textContent = groupName;
+        treeContainer.appendChild(catHeader);
+
+        groupFiles.forEach(f => {
+          const item = document.createElement('div');
+          item.className = 'file-item';
+          item.setAttribute('data-path', f.path);
+          const simpleName = f.path.split('/').pop();
+          item.innerHTML = `<span>${getFileIcon(f.path)}</span> <span style="font-weight: 500;">${simpleName}</span> <span style="font-size: 0.68rem; color: #475569; margin-left: auto;">${f.path}</span>`;
+          item.onclick = () => selectFile(f.path);
+          treeContainer.appendChild(item);
+        });
+      });
+    }
+
+    function selectFile(filePath) {
+      const fileObj = projectFiles.find(f => f.path === filePath);
+      if (!fileObj) return;
+
+      activeFileContent = fileObj.content || '';
+      document.getElementById('activeFilePathBadge').textContent = filePath;
+
+      const lines = activeFileContent.split('\n');
+      document.getElementById('fileLinesCount').textContent = `${lines.length} lines`;
+
+      // Update active tree item
+      document.querySelectorAll('.file-item').forEach(el => {
+        if (el.getAttribute('data-path') === filePath) {
+          el.className = 'file-item active';
+        } else {
+          el.className = 'file-item';
+        }
+      });
+
+      // Render line numbered code
+      const maxLineDigits = Math.max(2, String(lines.length).length);
+      const rendered = lines.map((line, idx) => {
+        const num = String(idx + 1).padStart(maxLineDigits, ' ');
+        const escaped = escapeHtml(line);
+        return `<div class="code-line"><span class="line-num">${num}</span><span class="line-code">${escaped || ' '}</span></div>`;
+      }).join('');
+
+      document.getElementById('codeViewerContent').innerHTML = rendered;
+      document.querySelector('.code-viewer-pane').scrollTop = 0;
+    }
+
+    function copyActiveCode() {
+      if (!activeFileContent) return;
+      navigator.clipboard.writeText(activeFileContent).then(() => {
+        const textSpan = document.getElementById('copyBtnText');
+        textSpan.textContent = 'Copied!';
+        setTimeout(() => { textSpan.textContent = 'Copy Code'; }, 2000);
+      });
+    }
+
+    function filterFiles(query) {
+      const q = query.toLowerCase().trim();
+      const items = document.querySelectorAll('.file-item');
+      items.forEach(el => {
+        const path = el.getAttribute('data-path').toLowerCase();
+        el.style.display = path.includes(q) ? 'flex' : 'none';
+      });
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeCodePreview();
+    });
+  </script>
   </script>
 </body>
 </html>
@@ -1179,6 +1568,81 @@ def build_status(task_id: str):
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     return task
+
+
+@app.get("/build/files/{task_id}")
+def build_files(task_id: str):
+    """Retrieve all generated source code files for a given build task or disk project."""
+    task = _build_tasks.get(task_id)
+    files = []
+    clean_name = "app"
+    app_name = "Application"
+
+    if task and task.get("result"):
+        state = task["result"]
+        clean_name = state.get("assembly", {}).get("clean_name") or "app"
+        app_name = state.get("spec", {}).get("app_name", clean_name.replace("-", " ").title())
+        project_dir = state.get("assembly", {}).get("project_dir") or os.path.join("output", clean_name)
+
+        if os.path.isdir(project_dir):
+            for root, _, filenames in os.walk(project_dir):
+                for fn in filenames:
+                    fpath = os.path.join(root, fn)
+                    rel = os.path.relpath(fpath, project_dir).replace("\\", "/")
+                    try:
+                        with open(fpath, "r", encoding="utf-8", errors="replace") as fh:
+                            content = fh.read()
+                    except Exception:
+                        content = "(Binary or unreadable file)"
+                    files.append({"path": rel, "content": content})
+        else:
+            for f in state.get("backend_output", {}).get("files", []):
+                files.append({"path": f"backend/{f['path']}", "content": f.get("content", "")})
+            for f in state.get("frontend_output", {}).get("files", []):
+                files.append({"path": f"frontend/{f['path']}", "content": f.get("content", "")})
+            for f in state.get("qa_report", {}).get("test_files", []):
+                files.append({"path": f"backend/{f['path']}", "content": f.get("content", "")})
+            for f in state.get("docs_output", {}).get("files", []):
+                files.append({"path": f['path'], "content": f.get("content", "")})
+    else:
+        # Check if task_id is 'latest' or matches a project on disk in output/
+        disk_dir = None
+        if os.path.isdir("output"):
+            if task_id == "latest":
+                dirs = [os.path.join("output", d) for d in os.listdir("output") if os.path.isdir(os.path.join("output", d))]
+                if dirs:
+                    dirs.sort(key=os.path.getmtime, reverse=True)
+                    disk_dir = dirs[0]
+            elif os.path.isdir(os.path.join("output", task_id)):
+                disk_dir = os.path.join("output", task_id)
+            else:
+                matches = [d for d in os.listdir("output") if os.path.isdir(os.path.join("output", d)) and task_id.lower() in d.lower()]
+                if matches:
+                    disk_dir = os.path.join("output", matches[0])
+
+        if not disk_dir or not os.path.isdir(disk_dir):
+            raise HTTPException(status_code=404, detail="Task or generated project files not found")
+
+        clean_name = os.path.basename(disk_dir)
+        app_name = clean_name.replace("-", " ").title()
+        for root, _, filenames in os.walk(disk_dir):
+            for fn in filenames:
+                fpath = os.path.join(root, fn)
+                rel = os.path.relpath(fpath, disk_dir).replace("\\", "/")
+                try:
+                    with open(fpath, "r", encoding="utf-8", errors="replace") as fh:
+                        content = fh.read()
+                except Exception:
+                    content = "(Binary or unreadable file)"
+                files.append({"path": rel, "content": content})
+
+    files.sort(key=lambda x: x["path"])
+    return {
+        "task_id": task_id,
+        "clean_name": clean_name,
+        "app_name": app_name,
+        "files": files,
+    }
 
 
 @app.get("/download/{clean_name}")
